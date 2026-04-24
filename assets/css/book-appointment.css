@@ -1,0 +1,304 @@
+.appt-hero{
+  padding: 70px 0 50px;
+  background: linear-gradient(180deg, #f5eeff 0%, #fdf1f8 100%);
+  text-align: center;
+}
+
+.appt-hero h1{
+  margin: 0 0 14px;
+  font-size: 54px;
+  font-weight: 800;
+  color: #25183d;
+}
+
+.appt-hero p{
+  max-width: 760px;
+  margin: 0 auto;
+  font-size: 18px;
+  line-height: 1.7;
+  color: #5d5672;
+}
+
+.appt-section{
+  padding: 45px 0 70px;
+  background: #fff;
+}
+
+.appt-grid{
+  display: grid;
+  grid-template-columns: 2fr 0.9fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.appt-form-card{
+  background: #fff;
+  border: 2px solid #c8b7f5;
+  border-radius: 28px;
+  box-shadow: 0 12px 30px rgba(108, 76, 158, 0.08);
+  overflow: hidden;
+}
+
+.appt-card-title{
+  padding: 22px 28px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #7e56da;
+}
+
+.appt-form{
+  padding: 24px 28px 30px;
+}
+
+.appt-form h2{
+  margin: 24px 0 16px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #2d2047;
+}
+
+.form-group{
+  margin-bottom: 18px;
+}
+
+.form-row{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.appt-form label{
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #433363;
+}
+
+.appt-form input,
+.appt-form select,
+.appt-form textarea{
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #d5cef6;
+  border-radius: 16px;
+  font-size: 15px;
+  color: #31254c;
+  background: #fff;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.appt-form input:focus,
+.appt-form select:focus,
+.appt-form textarea:focus{
+  border-color: #b48bf2;
+  box-shadow: 0 0 0 4px rgba(180, 139, 242, 0.14);
+}
+
+.pet-type-pills{
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.pet-pill{
+  position: relative;
+  display: inline-block;
+  margin: 0;
+}
+
+.pet-pill input{
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pet-pill span{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 110px;
+  padding: 13px 22px;
+  border-radius: 999px;
+  border: 2px solid #d8c8f8;
+  background: #fff;
+  color: #402f62;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.pet-pill input:checked + span{
+  background: linear-gradient(135deg, #b183f0, #eb8dbb);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 10px 24px rgba(177, 131, 240, 0.22);
+}
+
+.checkbox-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 30px;
+  padding: 18px 20px;
+  border: 2px solid #d5cef6;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.checkbox-grid label{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #3a2d5c;
+  cursor: pointer;
+}
+
+.checkbox-grid input[type="checkbox"]{
+  width: 18px;
+  height: 18px;
+  accent-color: #c084fc;
+}
+
+.appt-btn{
+  width: 100%;
+  margin-top: 10px;
+  padding: 16px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #b183f0, #eb8dbb);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(177, 131, 240, 0.22);
+}
+
+.appt-btn:hover{
+  opacity: 0.95;
+}
+
+.appt-sidebar{
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.side-card{
+  border-radius: 24px;
+  padding: 22px 20px;
+  border: 2px solid #d5c8f4;
+  box-shadow: 0 10px 24px rgba(90, 61, 136, 0.08);
+}
+
+.side-card h3{
+  margin: 0 0 14px;
+  font-size: 22px;
+  color: #2b1f46;
+}
+
+.side-card p{
+  margin: 0 0 12px;
+  color: #564e68;
+  line-height: 1.7;
+}
+
+.side-card.lavender{
+  background: #f0efff;
+}
+
+.side-card.pink{
+  background: #fff0f7;
+}
+
+.side-card.white{
+  background: #fff;
+}
+
+.appt-faq{
+  padding: 65px 0 75px;
+  background: linear-gradient(180deg, #f6f0ff 0%, #fdf3f8 100%);
+}
+
+.appt-faq h2{
+  text-align: center;
+  margin: 0 0 36px;
+  font-size: 44px;
+  color: #24183b;
+}
+
+.faq-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 34px 46px;
+}
+
+.faq-item h4{
+  margin: 0 0 10px;
+  font-size: 24px;
+  color: #2d2147;
+}
+
+.faq-item p{
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.7;
+  color: #5b556d;
+}
+
+.appt-msg{
+  margin: 16px 28px 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-weight: 600;
+}
+
+.appt-msg.success{
+  background: #eefaf0;
+  color: #187a2e;
+  border: 1px solid #bee3c6;
+}
+
+.appt-msg.error{
+  background: #fff1f1;
+  color: #b22222;
+  border: 1px solid #f0c4c4;
+}
+
+@media (max-width: 980px){
+  .appt-grid{
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px){
+  .appt-hero h1{
+    font-size: 38px;
+  }
+
+  .appt-faq h2{
+    font-size: 34px;
+  }
+
+  .faq-grid,
+  .form-row,
+  .checkbox-grid{
+    grid-template-columns: 1fr;
+  }
+
+  .appt-form{
+    padding: 20px 18px 24px;
+  }
+
+  .appt-card-title{
+    padding: 18px 18px 0;
+  }
+
+  .pet-pill span{
+    min-width: 95px;
+    padding: 12px 18px;
+  }
+}

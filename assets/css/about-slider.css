@@ -1,0 +1,636 @@
+:root{
+  --royal:#7158a6;
+  --light:#482384;
+  --white:#621080;
+}
+
+/* SECTION */
+.story-flow{
+  padding: 60px 0;
+  background: linear-gradient(180deg, #7158a6, #ffffff);
+  position: relative;
+}
+
+/* SOFT GLOW BACKGROUND */
+.story-flow::before{
+  content:"";
+  position:absolute;
+  width:500px;
+  height:500px;
+  background: radial-gradient(circle, rgba(113,88,166,0.25), transparent 70%);
+  top:-150px;
+  left:-150px;
+  z-index:0;
+}
+
+.story-flow::after{
+  content:"";
+  position:absolute;
+  width:400px;
+  height:400px;
+  background: radial-gradient(circle, rgba(113,88,166,0.18), transparent 70%);
+  bottom:-150px;
+  right:-100px;
+  z-index:0;
+}
+
+/* CONTAINER */
+.story-flow .container{
+  position: relative;
+  z-index: 2;
+  width: 90%;
+  max-width: 1100px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 90px;
+}
+
+/* CARD STYLE BLOCK */
+.story-block{
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 30px 35px;
+  max-width: 600px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.08);
+  border: 1px solid rgba(113,88,166,0.15);
+
+  transition: all 0.4s ease;
+}
+
+/* HOVER EFFECT */
+.story-block:hover{
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 25px 60px rgba(113,88,166,0.18);
+}
+
+/* LEFT RIGHT STYLE */
+.story-block:nth-child(2){
+  margin-left: auto;
+  text-align: right;
+}
+
+.story-block:nth-child(3){
+  margin-right: auto;
+}
+
+/* HEADING */
+.story-block h2{
+  font-size: 34px;
+  font-weight: 900;
+  margin-bottom: 12px;
+  color: var(--royal);
+  letter-spacing: -0.5px;
+}
+
+/* TEXT */
+.story-block p{
+  font-size: 16px;
+  line-height: 1.8;
+  color: #4a4a4a;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .story-block{
+    margin: 0 !important;
+    text-align: left !important;
+  }
+
+  .story-block h2{
+    font-size: 26px;
+  }
+}
+
+/* ===== ROYAL FULL BG ===== */
+.awardsStack{
+  padding: 100px 0;
+  background: #7158a6; /* FULL royal robes */
+  overflow: hidden;
+}
+
+/* ===== CENTER HEADING ===== */
+.awardsHead{
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.awardsHead h3{
+  font-size: 40px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.awardsHead p{
+  font-size: 18px;
+  color: rgba(255,255,255,0.85);
+  max-width: 700px;
+  margin: auto;
+}
+
+/* ===== REMOVE ARROWS ===== */
+.stackBtn{
+  display: none;
+}
+
+/* ===== STAGE ===== */
+.stackStage{
+  overflow: hidden;
+  max-width: 950px;
+  margin: auto;
+  position: relative;
+}
+
+/* ===== TRACK ===== */
+.stackTrack{
+  display: flex;
+  align-items: center;
+  transition: transform 0.8s ease;
+  will-change: transform;
+
+}
+
+/* ===== ITEMS ===== */
+.stackItem{
+  flex: 0 0 260px;
+  margin: 0 15px;
+  opacity: 0.4;
+  transform: scale(0.85);
+  transition: all 0.5s ease;
+}
+
+/* ===== IMAGE ===== */
+.stackItem img{
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  border-radius: 26px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+}
+
+/* ===== CENTER POP EFFECT ===== */
+.stackItem.active{
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* ===== MOBILE ===== */
+@media(max-width:768px){
+  .stackItem{
+    flex: 0 0 200px;
+  }
+}
+
+
+/* ===== REELS SECTION ===== */
+.reelsSection{
+  padding: 70px 0 90px;
+  background: linear-gradient(180deg, #f7f1fc 0%, #ffffff 100%);
+}
+
+.reelsHead{
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.reelsHead h2{
+  margin: 0 0 10px;
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 900;
+  color: #2a1443;
+}
+
+.reelsHead p{
+  max-width: 760px;
+  margin: 0 auto;
+  font-size: 15px;
+  line-height: 1.8;
+  color: rgba(42,20,67,0.68);
+}
+
+.reelsWrap{
+  position: relative;
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.reelsViewport{
+  overflow: hidden;
+  padding: 10px 70px;
+}
+
+.reelsTrack{
+  display: flex;
+  align-items: center;
+  transition: transform 0.65s ease;
+  will-change: transform;
+}
+
+.reelSlide{
+  flex: 0 0 33.3333%;
+  display: flex;
+  justify-content: center;
+  padding: 10px 8px;
+  transition: transform 0.45s ease, opacity 0.45s ease;
+}
+
+.reelCard{
+  width: 100%;
+  max-width: 260px;
+  aspect-ratio: 9 / 16;
+  border-radius: 26px;
+  overflow: hidden;
+  background: #111;
+  box-shadow: 0 18px 42px rgba(42,20,67,0.12);
+  border: 1px solid rgba(113,88,166,0.10);
+  transition: transform 0.45s ease, box-shadow 0.45s ease, opacity 0.45s ease;
+}
+
+.reelVideo{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #000;
+}
+
+/* center focus */
+.reelSlide.is-center .reelCard{
+  transform: scale(1.04);
+  box-shadow: 0 24px 56px rgba(42,20,67,0.18);
+}
+
+.reelSlide.is-side .reelCard{
+  transform: scale(0.90);
+  opacity: 0.78;
+}
+
+/* arrows */
+.reelBtn{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.92);
+  color: #2a1443;
+  font-size: 28px;
+  font-weight: 900;
+  box-shadow: 0 14px 30px rgba(42,20,67,0.12);
+  cursor: pointer;
+  z-index: 10;
+}
+
+.reelBtn:hover{
+  transform: translateY(-50%) scale(1.03);
+}
+
+.reelPrev{ left: 0; }
+.reelNext{ right: 0; }
+
+/* dots */
+.reelsDots{
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.reelsDots .dot{
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(113,88,166,0.28);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: none;
+}
+
+.reelsDots .dot.active{
+  width: 28px;
+  background: #7158a6;
+}
+
+/* ===== REELS SECTION PREMIUM BG ===== */
+.reelsSection {
+  padding: 80px 0;
+  background: linear-gradient(
+    135deg,
+    #f5f0ff 0%,
+    #d7d2e2 25%,
+    #b6abd2 50%,
+    #8b80b0 75%,
+    #7158a6 100%
+  );
+}
+
+/* Glass effect container */
+.reelsSection .container {
+  background: rgba(186, 181, 181, 0.06);
+  backdrop-filter: blur(20px);
+  border-radius: 30px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+}
+
+/* Heading center + premium */
+.reelsHead {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.reelsHead h2 {
+  font-size: 32px;
+  color: #4d1d76;
+  font-weight: 700;
+}
+
+.reelsHead p {
+  color: rgba(77, 33, 114, 0.7);
+  font-size: 15px;
+}
+
+/* responsive */
+@media (max-width: 980px){
+  .reelsViewport{
+    padding: 10px 56px;
+  }
+
+  .reelSlide{
+    flex: 0 0 50%;
+  }
+}
+
+@media (max-width: 640px){
+  .reelsViewport{
+    padding: 10px 18px;
+  }
+
+  .reelSlide{
+    flex: 0 0 100%;
+  }
+
+  .reelSlide.is-side .reelCard,
+  .reelSlide.is-center .reelCard{
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .reelBtn{
+    width: 44px;
+    height: 44px;
+    font-size: 24px;
+  }
+
+  .reelPrev{ left: -4px; }
+  .reelNext{ right: -4px; }
+}
+
+/* ===== INSTAGRAM BUTTON ===== */
+.reelsInstagram {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.instaBtn {
+  display: inline-block;
+  padding: 12px 26px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #7158a6, #7158a6);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 15px;
+  box-shadow: 0 10px 25px rgba(113,88,166,0.3);
+  transition: 0.3s ease;
+}
+
+.instaBtn:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #5b4588, #7158a6);
+}
+
+.aboutPage {
+  overflow-x: hidden;
+}
+
+.about-reviews-section{
+  padding: 70px 0;
+  background: linear-gradient(180deg, #f8f0ff, #fff2f8);
+}
+
+.about-reviews-section h2{
+  text-align: center;
+  margin: 0 0 10px;
+  font-size: 42px;
+  color: #2a1443;
+}
+
+.about-review-sub{
+  text-align: center;
+  max-width: 650px;
+  margin: 0 auto 34px;
+  color: #6e657f;
+}
+
+.about-reviews-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.about-review-card{
+  background: #fff;
+  border: 2px solid #dcc8f7;
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: 0 12px 26px rgba(76, 46, 118, 0.08);
+}
+
+.review-stars{
+  color: #b76ef4;
+  font-size: 22px;
+  margin-bottom: 14px;
+}
+
+.review-text{
+  color: #524b63;
+  line-height: 1.8;
+  margin-bottom: 18px;
+}
+
+.review-meta h4{
+  margin: 0 0 4px;
+  color: #2f1d4b;
+  font-size: 17px;
+}
+
+.review-meta span{
+  color: #7a718b;
+  font-size: 14px;
+}
+
+.no-reviews{
+  text-align: center;
+  grid-column: 1 / -1;
+  color: #6f6780;
+  font-size: 16px;
+}
+
+body{
+  background:#f6f4ff;
+  font-family:'Poppins', sans-serif;
+}
+
+/* FORM CARD */
+.form-card{
+  max-width:600px;
+  margin:40px auto;
+  background:#fff;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+
+.form-card h2{
+  text-align:center;
+  margin-bottom:20px;
+  color:#4b2e83;
+}
+
+/* INPUTS */
+.form-group{
+  margin-bottom:15px;
+}
+
+.form-group label{
+  font-weight:600;
+  font-size:14px;
+  display:block;
+  margin-bottom:5px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  outline:none;
+  transition:0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus{
+  border-color:#7b5cff;
+  box-shadow:0 0 0 3px rgba(123,92,255,0.1);
+}
+
+/* BUTTON */
+.btn{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:30px;
+  background:linear-gradient(135deg,#7b5cff,#b58dff);
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 20px rgba(123,92,255,0.3);
+}
+
+.review-card{
+  background:#fff;
+  padding:15px;
+  margin:10px;
+  border-radius:10px;
+  animation:fadeUp 0.5s ease;
+}
+
+/* ===== FINAL SCROLLBAR FIX (ABOUT PAGE) ===== */
+
+/* 1. Prevent page overflow */
+html, body {
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+  overflow-x: clip; /* better than hidden */
+}
+
+/* 2. Container safety */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 3. SLIDER VIEWPORT FIX */
+.stackStage,
+.reelsViewport {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 4. TRACK FIX (MAIN ISSUE SOLVED HERE) */
+.stackTrack,
+.reelsTrack {
+  display: flex;
+  width: max-content;   /* ⭐ THIS FIXES OVERFLOW */
+}
+
+/* 5. SLIDES */
+.stackItem,
+.reelSlide {
+  flex-shrink: 0;
+}
+
+/* 6. MEDIA SAFETY */
+img,
+video {
+  max-width: 100%;
+  display: block;
+}
+
+/* 7. ARROWS FIX (REMOVE NEGATIVE POSITION) */
+.stackBtn.left,
+.reelPrev {
+  left: 10px;
+}
+
+.stackBtn.right,
+.reelNext {
+  right: 10px;
+}
+
+/* 8. WR
+
+
+@keyframes fadeUp{
+  from{opacity:0; transform:translateY(20px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+@media(max-width:900px){
+  .about-reviews-grid{
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media(max-width:650px){
+  .about-reviews-grid{
+    grid-template-columns: 1fr;
+  }
+}

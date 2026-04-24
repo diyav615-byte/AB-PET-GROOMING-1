@@ -71,7 +71,7 @@ $reviews = mysqli_query($conn, "SELECT r.*, c.name as customer_name
                             <td>
                                 <div class="rating-stars">
                                     <?php for($i = 1; $i <= 5; $i++): ?>
-                                        <i class="fas fa-star <?php echo $i <= $review['rating'] ? '' : 'empty'; ?>"></i>
+                                        <i class="fas fa-star <?php echo $i <= $review['rating'] ? '' : 'empty-star'; ?>"></i>
                                     <?php endfor; ?>
                                 </div>
                                 <div style="font-size: 12px; color: var(--text-muted);"><?php echo $review['rating']; ?>/5</div>
@@ -83,11 +83,9 @@ $reviews = mysqli_query($conn, "SELECT r.*, c.name as customer_name
                             </td>
                             <td>
                                 <?php 
-                                $status_class = match($review['status']) {
-                                    'approved' => 'status-approved',
-                                    'rejected' => 'status-rejected',
-                                    default => 'status-pending'
-                                };
+                                $status_class = 'status-pending';
+                                if ($review['status'] === 'approved') $status_class = 'status-approved';
+                                elseif ($review['status'] === 'rejected') $status_class = 'status-rejected';
                                 ?>
                                 <span class="status-badge <?php echo $status_class; ?>">
                                     <?php echo ucfirst($review['status']); ?>

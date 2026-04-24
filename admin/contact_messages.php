@@ -77,7 +77,7 @@ $messages = mysqli_query($conn, "SELECT * FROM contact_messages ORDER BY id DESC
                                 <div style="font-size: 12px; color: var(--text-muted);">
                                     <?php echo date('M d, Y', strtotime($msg['created_at'])); ?>
                                     <br>
-                                    <?php echo date('h:i A', strtotime($msg['created_at'])); ?>
+                                    <?php echo isset($msg['created_at']) ? date('h:i A', strtotime($msg['created_at'])) : ''; ?>
                                 </div>
                             </td>
                             <td>

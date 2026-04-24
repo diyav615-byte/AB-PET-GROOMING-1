@@ -10,10 +10,36 @@
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    /* Reset and base */
-    * { -webkit-tap-highlight-color: transparent; }
+    /* Mobile Hamburger */
+    .menu-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: #f0f0f5;
+      border: none;
+      border-radius: 12px;
+      font-size: 22px;
+      color: #24163a;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
     
-    /* Floating Social Icons */
+    .menu-toggle:active {
+      background: #e5e5ee;
+      transform: scale(0.95);
+    }
+    
+    .menu-toggle i {
+      transition: transform 0.3s ease;
+    }
+    
+    .menu-toggle.active i {
+      transform: rotate(90deg);
+    }
+    
+    /* Floating Social */
     .floating-social {
       position: fixed;
       bottom: 16px;
@@ -21,7 +47,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      z-index: 9999;
+      z-index: 9998;
     }
     
     .floating-social a {
@@ -35,28 +61,18 @@
       color: #fff;
       text-decoration: none;
       box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .floating-social a:active {
+      transform: scale(0.9);
     }
     
     .floating-social .whatsapp { background: #25D366; }
     .floating-social .instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2126); }
     .floating-social .call { background: #7158a6; }
     .floating-social .logo-btn { background: #fff; border: 2px solid #7158a6; }
-    .floating-social .logo-btn img { width: 26px; height: 26px; }
-    
-    /* Menu Toggle */
-    .menu-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 44px;
-      height: 44px;
-      background: #f5f5f5;
-      border: none;
-      border-radius: 10px;
-      font-size: 24px;
-      color: #24163a;
-      cursor: pointer;
-    }
+    .floating-social .logo-btn img { width: 24px; height: 24px; }
   </style>
 </head>
 <body>
@@ -75,10 +91,12 @@
       <img src="assets/images/logo.png" alt="AB" class="logo">
     </a>
 
-    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle Menu">
       <i class="fas fa-bars"></i>
     </button>
 
+    <!-- Navigation Menu -->
     <nav class="nav" id="mainNav">
       <a href="index.php">Home</a>
       <a href="about.php">About</a>
@@ -94,14 +112,20 @@
 <script>
 function toggleMenu() {
   var nav = document.getElementById('mainNav');
-  var btn = document.querySelector('.menu-toggle i');
+  var btn = document.querySelector('.menu-toggle');
+  var icon = btn.querySelector('i');
+  
+  // Toggle menu
   nav.classList.toggle('active');
-  if(nav.classList.contains('active')) {
-    btn.classList.remove('fa-bars');
-    btn.classList.add('fa-times');
+  btn.classList.toggle('active');
+  
+  // Toggle icon between bars and times
+  if (nav.classList.contains('active')) {
+    icon.classList.remove('fa-bars');
+    icon.classList.add('fa-times');
   } else {
-    btn.classList.remove('fa-times');
-    btn.classList.add('fa-bars');
+    icon.classList.remove('fa-times');
+    icon.classList.add('fa-bars');
   }
 }
 
@@ -109,12 +133,30 @@ function toggleMenu() {
 document.querySelectorAll('.nav a').forEach(function(link) {
   link.addEventListener('click', function() {
     var nav = document.getElementById('mainNav');
-    var btn = document.querySelector('.menu-toggle i');
-    if(window.innerWidth < 768) {
+    var btn = document.querySelector('.menu-toggle');
+    var icon = btn.querySelector('i');
+    
+    // Close on mobile
+    if (window.innerWidth < 768) {
       nav.classList.remove('active');
-      btn.classList.remove('fa-times');
-      btn.classList.add('fa-bars');
+      btn.classList.remove('active');
+      icon.classList.remove('fa-times');
+      icon.classList.add('fa-bars');
     }
   });
+});
+
+// Close menu when clicking outside
+document.addEventListener('click', function(e) {
+  var nav = document.getElementById('mainNav');
+  var btn = document.querySelector('.menu-toggle');
+  var icon = btn.querySelector('i');
+  
+  if (!nav.contains(e.target) && !btn.contains(e.target) && nav.classList.contains('active')) {
+    nav.classList.remove('active');
+    btn.classList.remove('active');
+    icon.classList.remove('fa-times');
+    icon.classList.add('fa-bars');
+  }
 });
 </script>

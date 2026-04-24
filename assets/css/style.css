@@ -646,16 +646,6 @@ body{
   padding:0 20px;
 }
 
-/* ================= NAVBAR ================= */
-.site-header{
-  position: sticky;
-  top: 0;
-  z-index: 999;
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(10px);
-  border-bottom:1px solid rgba(0,0,0,0.05);
-}
-
 .nav-inner{
   display:flex;
   justify-content:space-between;

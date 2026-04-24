@@ -49,7 +49,7 @@ $services = mysqli_query($conn, "SELECT * FROM services ORDER BY id DESC");
 $categories = ['Grooming', 'Boarding', 'Spa', 'Training', 'Medical', 'Other'];
 ?>
 
-<!-- PAGE HEADER -->
+PAGE HEADER
 <div class="page-header">
     <h1>Services</h1>
     <p>Add and manage your pet grooming services</p>

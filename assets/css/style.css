@@ -207,7 +207,7 @@ button { font-family: inherit; }
     height: 46px;
   }
 }
-/* Ensure hamburger is hidden on desktop screens (tablet remains with mobile-like behavior) */ 
-@media (min-width: 1024px) {
+/* Ensure hamburger is hidden on desktop screens */ 
+@media (min-width: 768px) {
   .menu-toggle { display: none !important; }
 }

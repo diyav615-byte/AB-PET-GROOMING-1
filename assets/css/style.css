@@ -58,7 +58,7 @@ button { font-family: inherit; }
   height: 38px;
 }
 
-/* Hamburger Button */
+/* ================= MOBILE: Hamburger + Vertical Menu ================= */
 .menu-toggle {
   display: flex;
   align-items: center;
@@ -71,7 +71,6 @@ button { font-family: inherit; }
   font-size: 20px;
   color: #24163a;
   cursor: pointer;
-  transition: all 0.2s ease;
   flex-shrink: 0;
 }
 
@@ -80,18 +79,14 @@ button { font-family: inherit; }
   transform: scale(0.95);
 }
 
-.menu-toggle i {
-  transition: transform 0.3s ease;
-}
-
-/* Navigation */
+/* Mobile Nav - Hidden by default, slides down when active */
 .nav {
+  display: none;
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
   background: #fff;
-  display: none;
   flex-direction: column;
   box-shadow: 0 8px 24px rgba(0,0,0,0.12);
   max-height: 70vh;
@@ -103,6 +98,7 @@ button { font-family: inherit; }
   display: flex;
 }
 
+/* All menu items vertical */
 .nav a {
   display: block;
   padding: 16px 18px;
@@ -116,38 +112,38 @@ button { font-family: inherit; }
 .nav a:hover {
   background: #f8f6fc;
   color: #7158a6;
-  padding-left: 22px;
 }
 
 .nav a:last-child {
   border-bottom: none;
 }
 
+/* Book Now Button inside hamburger */
 .btn-book {
   background: #7158a6 !important;
   color: #fff !important;
   text-align: center;
   font-weight: 600;
-  margin: 12px;
+  margin: 14px;
   padding: 14px !important;
   border-radius: 25px;
 }
 
 .btn-book:hover {
   background: #5a4588 !important;
-  color: #fff !important;
-  padding-left: 18px !important;
 }
 
-/* ================= TABLET (768px+) ================= */
+/* ================= DESKTOP: Hide Hamburger, Show Horizontal Menu ================= */
 @media (min-width: 768px) {
+  /* Hide hamburger on desktop */
   .menu-toggle {
     display: none;
   }
   
+  /* Show menu horizontally */
   .nav {
+    display: flex !important;
     position: static;
-    display: flex;
     flex-direction: row;
     background: transparent;
     box-shadow: none;
@@ -157,6 +153,7 @@ button { font-family: inherit; }
     width: auto;
   }
   
+  /* Horizontal menu items */
   .nav a {
     padding: 10px 14px;
     font-size: 15px;
@@ -168,21 +165,19 @@ button { font-family: inherit; }
   .nav a:hover {
     background: transparent;
     color: #7158a6;
-    padding-left: 14px;
   }
   
+  /* Book Now button inline */
   .btn-book {
     background: #7158a6 !important;
     color: #fff !important;
     border-radius: 25px;
     padding: 10px 18px !important;
     margin: 0 0 0 8px;
-    text-align: center;
   }
   
   .btn-book:hover {
     color: #fff !important;
-    padding-left: 18px !important;
   }
   
   .nav-inner {
@@ -195,7 +190,7 @@ button { font-family: inherit; }
   }
 }
 
-/* ================= DESKTOP (1100px+) ================= */
+/* ================= LARGE DESKTOP ================= */
 @media (min-width: 1100px) {
   .nav-inner {
     padding: 14px 0;

@@ -13,22 +13,22 @@
     /* Floating Social Icons */
     .floating-social {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
+      bottom: 20px;
+      right: 20px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       z-index: 1000;
     }
     
     .floating-social a {
-      width: 52px;
-      height: 52px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 20px;
       color: #fff;
       text-decoration: none;
       box-shadow: 0 4px 16px rgba(0,0,0,0.2);
@@ -36,36 +36,31 @@
     }
     
     .floating-social a:hover {
-      transform: translateY(-4px) scale(1.1);
+      transform: translateY(-3px) scale(1.05);
     }
     
-    .floating-social .whatsapp {
-      background: #25D366;
+    .floating-social .whatsapp { background: #25D366; }
+    .floating-social .instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2126); }
+    .floating-social .call { background: #7158a6; }
+    .floating-social .logo-btn { background: #fff; border: 2px solid #7158a6; }
+    .floating-social .logo-btn img { width: 24px; height: 24px; object-fit: contain; }
+    
+    /* Mobile Menu Toggle */
+    .menu-toggle {
+      display: block;
+      font-size: 26px;
+      padding: 8px 12px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: #24163a;
     }
     
-    .floating-social .instagram {
-      background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2126);
-    }
-    
-    .floating-social .call {
-      background: #7158a6;
-    }
-    
-    .floating-social .logo-btn {
-      background: #fff;
-      border: 3px solid #7158a6;
-    }
-    
-    .floating-social .logo-btn img {
-      width: 28px;
-      height: 28px;
-      object-fit: contain;
-    }
-    
-    @media (max-width: 768px) {
+    @media (max-width: 767px) {
       .floating-social {
         bottom: 16px;
         right: 16px;
+        gap: 8px;
       }
       
       .floating-social a {
@@ -80,29 +75,25 @@
 
 <!-- Floating Social Icons -->
 <div class="floating-social">
-  <a href="tel:+918828719786" class="call" title="Call Us">
-    <i class="fas fa-phone"></i>
-  </a>
-  <a href="https://wa.me/918828719786" target="_blank" class="whatsapp" title="WhatsApp">
-    <i class="fab fa-whatsapp"></i>
-  </a>
-  <a href="https://instagram.com/abrar_shaikhsk__" target="_blank" class="instagram" title="Instagram">
-    <i class="fab fa-instagram"></i>
-  </a>
-  <a href="index.php" class="logo-btn" title="Home">
-    <img src="assets/images/logo.png" alt="Logo">
-  </a>
+  <a href="tel:+918828719786" class="call" title="Call"><i class="fas fa-phone"></i></a>
+  <a href="https://wa.me/918828719786" target="_blank" class="whatsapp" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+  <a href="https://instagram.com/abrar_shaikhsk__" target="_blank" class="instagram" title="Instagram"><i class="fab fa-instagram"></i></a>
+  <a href="index.php" class="logo-btn" title="Home"><img src="assets/images/logo.png" alt="Logo"></a>
 </div>
 
 <header class="site-header">
   <div class="container nav-inner">
     
-   <a class="brand" href="index.php">
-  <img src="assets/images/logo.png" alt="Logo" class="logo">
-  <span>AB Pet Grooming</span>
-</a>
+    <a class="brand" href="index.php">
+      <img src="assets/images/logo.png" alt="Logo" class="logo">
+      <span>AB Pet Grooming</span>
+    </a>
 
-    <nav class="nav">
+    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Menu">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <nav class="nav" id="mainNav">
       <a href="index.php">Home</a>
       <a href="about.php">About Us</a>
       <a href="services.php">Services</a>
@@ -112,8 +103,32 @@
     </nav>
 
     <div class="nav-buttons">
-      <a href="book-appointment.php" class="btn-pill btn-solid">Book Appointment</a>
+      <a href="book-appointment.php" class="btn-pill btn-solid">Book Now</a>
     </div>
 
   </div>
 </header>
+
+<script>
+function toggleMenu() {
+  const nav = document.getElementById('mainNav');
+  const icon = document.querySelector('.menu-toggle i');
+  nav.classList.toggle('active');
+  if(nav.classList.contains('active')) {
+    icon.classList.remove('fa-bars');
+    icon.classList.add('fa-times');
+  } else {
+    icon.classList.remove('fa-times');
+    icon.classList.add('fa-bars');
+  }
+}
+
+// Close menu when clicking a link
+document.querySelectorAll('.nav a').forEach(link => {
+  link.addEventListener('click', () => {
+    document.getElementById('mainNav').classList.remove('active');
+    document.querySelector('.menu-toggle i').classList.remove('fa-times');
+    document.querySelector('.menu-toggle i').classList.add('fa-bars');
+  });
+});
+</script>

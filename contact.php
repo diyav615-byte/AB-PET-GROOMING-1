@@ -51,7 +51,7 @@
       <div class="contact-form">
         <h2>Send us a Message</h2>
 
-        <form action="" method="POST">
+        <form action="submit_contact.php" method="POST">
           <label>Name *</label>
           <input type="text" name="name" placeholder="Your name" required>
 
@@ -110,7 +110,7 @@
     </div>
 
     <!-- REVIEW FORM -->
-    <section class="reviews-submit-section">
+      <section class="reviews-submit-section">
       <div class="container">
         <div class="review-form-card">
           <h2>Share Your Experience</h2>
@@ -124,7 +124,7 @@
             <div class="review-msg error">Something went wrong. Please try again.</div>
           <?php endif; ?>
 
-          <form action="" method="POST" class="review-form">
+          <form action="submit_review.php" method="POST" class="review-form">
 
             <div class="review-row">
               <div class="review-group">

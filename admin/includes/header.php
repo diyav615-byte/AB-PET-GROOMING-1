@@ -69,6 +69,12 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     </a>
                 </li>
                 <li>
+                    <a href="activity_logs.php" class="<?php echo $current_page == 'activity_logs' ? 'active' : ''; ?>">
+                        <i class="fas fa-history"></i>
+                        <span>Activity Logs</span>
+                    </a>
+                </li>
+                <li>
                     <a href="payment_details.php" class="<?php echo $current_page == 'payment_details' ? 'active' : ''; ?>">
                         <i class="fas fa-credit-card"></i>
                         <span>Payment Details</span>

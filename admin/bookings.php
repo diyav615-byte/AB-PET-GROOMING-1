@@ -1,242 +1,277 @@
 <?php
-$page_title = "Bookings";
+$page_title = "Appointments";
 require_once 'includes/header.php';
 
 include '../config/db.php';
 
-$bookings = mysqli_query($conn, "SELECT b.*, c.name as owner_name, c.email, c.phone, c.city, c.address, p.name as pet_name, p.type as pet_type, p.breed, p.size as pet_size, p.age as pet_age, p.color as pet_color, p.vaccinated, p.special_notes as pet_notes, s.name as service_name, s.price 
-    FROM bookings b 
-    LEFT JOIN customers c ON b.customer_id = c.id 
-    LEFT JOIN pets p ON b.pet_id = p.id 
-    LEFT JOIN services s ON b.service_id = s.id 
-    ORDER BY b.id DESC");
+$search = $_GET['search'] ?? '';
+$date_from = $_GET['date_from'] ?? '';
+$date_to = $_GET['date_to'] ?? '';
+$pet_type_filter = $_GET['pet_type'] ?? '';
 
-$status_options = ['pending', 'confirmed', 'completed', 'cancelled'];
-$pet_types = ['Dog', 'Cat', 'Bird', 'Rabbit', 'Other'];
-$service_list = mysqli_query($conn, "SELECT id, name, price FROM services WHERE active = 1 ORDER BY name");
+// Build where clause
+$whereConditions = [];
+$params = [];
+$types = '';
+
+if ($search) {
+    $whereConditions[] = "(owner_name LIKE ? OR phone LIKE ? OR pet_name LIKE ? OR id LIKE ?)";
+    $searchParam = "%{$search}%";
+    $params[] = $searchParam;
+    $params[] = $searchParam;
+    $params[] = $searchParam;
+    $params[] = $searchParam;
+    $types .= 'ssss';
+}
+
+if ($pet_type_filter) {
+    $whereConditions[] = "pet_category = ?";
+    $params[] = $pet_type_filter;
+    $types .= 's';
+}
+
+if ($date_from) {
+    $whereConditions[] = "appointment_date >= ?";
+    $params[] = $date_from;
+    $types .= 's';
+}
+
+if ($date_to) {
+    $whereConditions[] = "appointment_date <= ?";
+    $params[] = $date_to;
+    $types .= 's';
+}
+
+$whereClause = implode(' AND ', $whereConditions);
+
+// Pagination
+$perPage = 15;
+$page = (int)($_GET['page'] ?? 1);
+if ($page < 1) $page = 1;
+
+// Get total count
+$countSql = "SELECT COUNT(*) as total FROM appointments";
+if ($whereClause) {
+    $countSql .= " WHERE {$whereClause}";
+}
+$stmt = $conn->prepare($countSql);
+if ($params) {
+    $stmt->bind_param($types, ...$params);
+}
+$stmt->execute();
+$totalRecords = $stmt->get_result()->fetch_assoc()['total'];
+
+$totalPages = ceil($totalRecords / $perPage);
+if ($page > $totalPages && $totalPages > 0) $page = $totalPages;
+if ($totalRecords == 0) $totalPages = 1;
+$offset = ($page - 1) * $perPage;
+
+// Get appointments
+$sql = "SELECT * FROM appointments";
+if ($whereClause) {
+    $sql .= " WHERE {$whereClause}";
+}
+$sql .= " ORDER BY id DESC LIMIT ?, ?";
+
+$stmt = $conn->prepare($sql);
+$params[] = $offset;
+$params[] = $perPage;
+$types .= 'ii';
+$stmt->bind_param($types, ...$params);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Get stats
+$statsSql = "SELECT 
+    COUNT(*) as total,
+    SUM(CASE WHEN appointment_date >= CURDATE() THEN 1 ELSE 0 END) as upcoming
+    FROM appointments";
+$stmt = $conn->prepare($statsSql);
+$stmt->execute();
+$stats = $stmt->get_result()->fetch_assoc();
+
+$today = date('Y-m-d');
+$todayCount = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as cnt FROM appointments WHERE appointment_date = '$today'"))['cnt'];
 ?>
 
 <!-- PAGE HEADER -->
 <div class="page-header">
-    <h1>Bookings</h1>
-    <p>View and manage all pet grooming appointments</p>
+    <h1>Appointments</h1>
+    <p>View and manage all appointment requests</p>
 </div>
 
 <!-- FILTERS -->
 <div class="card mb-24">
     <div class="card-body">
-        <div class="filter-section">
-            <div class="search-box">
+        <form method="GET" class="filter-section" style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+            <div class="search-box" style="flex: 1; min-width: 250px;">
                 <i class="fas fa-search"></i>
-                <input 
-                    type="text" 
-                    id="searchInput" 
-                    placeholder="Search by booking ID, customer, pet name..."
-                    onkeyup="filterTable('searchInput', 'bookingsTable')"
-                >
+                <input type="text" name="search" placeholder="Search by name, phone, pet name..." 
+                    value="<?php echo htmlspecialchars($search); ?>">
             </div>
-            <select id="statusFilter" class="filter-select" onchange="filterByStatus()" style="padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px; min-width: 160px;">
-                <option value="">All Statuses</option>
-                <option value="pending">Pending</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
-            </select>
-            <select id="petTypeFilter" class="filter-select" onchange="filterByPetType()" style="padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px; min-width: 140px;">
+            
+            <input type="date" name="date_from" value="<?php echo $date_from; ?>" 
+                style="padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px;"
+                placeholder="From Date">
+            
+            <input type="date" name="date_to" value="<?php echo $date_to; ?>" 
+                style="padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px;"
+                placeholder="To Date">
+            
+            <select name="pet_type" style="padding: 12px 16px; border: 2px solid var(--border); border-radius: 8px; min-width: 120px;">
                 <option value="">All Pets</option>
-                <option value="Dog">Dog</option>
-                <option value="Cat">Cat</option>
-                <option value="Bird">Bird</option>
-                <option value="Rabbit">Rabbit</option>
+                <option value="Dog" <?php echo $pet_type_filter === 'Dog' ? 'selected' : ''; ?>>Dog</option>
+                <option value="Cat" <?php echo $pet_type_filter === 'Cat' ? 'selected' : ''; ?>>Cat</option>
             </select>
-        </div>
+            
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-filter"></i> Filter
+            </button>
+            
+            <a href="bookings.php" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Clear
+            </a>
+        </form>
     </div>
 </div>
 
-<!-- BOOKINGS TABLE -->
+<!-- STATS -->
+<div class="stats-grid mb-24">
+    <div class="stat-card">
+        <div class="stat-card-icon">📅</div>
+        <div class="stat-card-value"><?php echo $stats['total']; ?></div>
+        <div class="stat-card-label">Total Appointments</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon">📆</div>
+        <div class="stat-card-value"><?php echo $todayCount; ?></div>
+        <div class="stat-card-label">Today</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-card-icon">⏰</div>
+        <div class="stat-card-value"><?php echo $stats['upcoming']; ?></div>
+        <div class="stat-card-label">Upcoming</div>
+    </div>
+</div>
+
+<!-- APPOINTMENTS TABLE -->
 <div class="card">
     <div class="card-header">
-        <h2><i class="fas fa-calendar-check"></i> Bookings List</h2>
+        <h2><i class="fas fa-calendar-check"></i> Appointments List</h2>
         <span style="color: var(--text-light); font-size: 14px;">
-            <i class="fas fa-list"></i> Total: <?php echo mysqli_num_rows($bookings); ?> bookings
+            <i class="fas fa-list"></i> Total: <?php echo $totalRecords; ?> appointments
         </span>
     </div>
     <div class="card-body">
         <div class="table-responsive">
-            <table id="bookingsTable">
+            <table id="appointmentsTable">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Customer Info</th>
+                        <th>Owner Info</th>
                         <th>Pet Details</th>
                         <th>Service</th>
                         <th>Date & Time</th>
-                        <th>Status</th>
-                        <th>Price</th>
+                        <th>Notes</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if(mysqli_num_rows($bookings) > 0): ?>
-                        <?php while($booking = mysqli_fetch_assoc($bookings)): ?>
-                        <tr data-status="<?php echo $booking['status']; ?>" data-pet-type="<?php echo $booking['pet_type']; ?>">
+                    <?php if($result && $result->num_rows > 0): ?>
+                        <?php while($row = $result->fetch_assoc()): ?>
+                        <tr data-pet-type="<?php echo $row['pet_category']; ?>">
+                            <td><strong style="color: var(--primary);">#<?php echo $row['id']; ?></strong></td>
                             <td>
-                                <strong style="color: var(--primary);">#<?php echo $booking['id']; ?></strong>
-                            </td>
-                            <td>
-                                <div style="font-weight: 600;"><?php echo htmlspecialchars($booking['owner_name'] ?? 'N/A'); ?></div>
+                                <div style="font-weight: 600;"><?php echo htmlspecialchars($row['owner_name']); ?></div>
                                 <div style="font-size: 12px; color: var(--text-muted);">
-                                    <i class="fas fa-envelope"></i> <?php echo htmlspecialchars($booking['email'] ?? '-'); ?>
+                                    <i class="fas fa-envelope"></i> <?php echo htmlspecialchars($row['email']); ?>
                                 </div>
                                 <div style="font-size: 12px; color: var(--text-muted);">
-                                    <i class="fas fa-phone"></i> <?php echo htmlspecialchars($booking['phone'] ?? '-'); ?>
+                                    <i class="fas fa-phone"></i> <?php echo htmlspecialchars($row['phone']); ?>
                                 </div>
                             </td>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 8px;">
                                     <span style="font-size: 24px;">
-                                        <?php if($booking['pet_type'] == 'Dog'): ?><i class="fas fa-dog"></i>
-                                        <?php elseif($booking['pet_type'] == 'Cat'): ?><i class="fas fa-cat"></i>
+                                        <?php if($row['pet_category'] == 'Dog'): ?><i class="fas fa-dog"></i>
+                                        <?php elseif($row['pet_category'] == 'Cat'): ?><i class="fas fa-cat"></i>
                                         <?php else: ?><i class="fas fa-paw"></i>
                                         <?php endif; ?>
                                     </span>
                                     <div>
-                                        <div style="font-weight: 600;"><?php echo htmlspecialchars($booking['pet_name'] ?? 'N/A'); ?></div>
+                                        <div style="font-weight: 600;"><?php echo htmlspecialchars($row['pet_name']); ?></div>
                                         <div style="font-size: 11px; color: var(--text-muted);">
-                                            <?php echo htmlspecialchars($booking['pet_type'] ?? '-'); ?> • <?php echo htmlspecialchars($booking['breed'] ?? '-'); ?>
+                                            <?php echo htmlspecialchars($row['pet_category']); ?> - <?php echo htmlspecialchars($row['breed']); ?>
                                         </div>
                                         <div style="font-size: 11px; color: var(--text-muted);">
-                                            Size: <?php echo htmlspecialchars($booking['pet_size'] ?? '-'); ?>
+                                            Size: <?php echo htmlspecialchars($row['pet_size']); ?> | Qty: <?php echo $row['pet_count']; ?>
                                         </div>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <div style="font-weight: 500;"><?php echo htmlspecialchars($booking['service_name'] ?? 'N/A'); ?></div>
-                                <?php if($booking['notes']): ?>
-                                <div style="font-size: 11px; color: var(--text-muted); max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<?php echo htmlspecialchars($booking['notes']); ?>">
-                                    <?php echo htmlspecialchars($booking['notes']); ?>
+                                <div style="font-weight: 500;"><?php echo htmlspecialchars($row['main_service']); ?></div>
+                                <?php if($row['addons']): ?>
+                                <div style="font-size: 11px; color: var(--text-muted);">
+                                    + <?php echo htmlspecialchars($row['addons']); ?>
                                 </div>
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <div><i class="fas fa-calendar"></i> <?php echo date('M d, Y', strtotime($booking['booking_date'])); ?></div>
-                                <div style="font-size: 12px; color: var(--text-muted);"><i class="fas fa-clock"></i> <?php echo htmlspecialchars($booking['start_time'] ?? '-'); ?></div>
+                                <div><i class="fas fa-calendar"></i> <?php echo date('M d, Y', strtotime($row['appointment_date'])); ?></div>
+                                <div style="font-size: 12px; color: var(--text-muted);"><i class="fas fa-clock"></i> <?php echo htmlspecialchars($row['appointment_time']); ?></div>
                             </td>
-                            <td>
-                                <select class="status-select" onchange="updateStatus(<?php echo $booking['id']; ?>, this.value, 'booking')" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-white); font-size: 12px; font-weight: 500;">
-                                    <?php foreach ($status_options as $option): ?>
-                                    <option value="<?php echo $option; ?>" <?php echo $booking['status'] === $option ? 'selected' : ''; ?>>
-                                        <?php echo ucfirst($option); ?>
-                                    </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </td>
-                            <td>
-                                <strong style="color: var(--success);">$<?php echo number_format($booking['total_price'] ?: $booking['price'], 2); ?></strong>
+                            <td style="max-width: 150px;">
+                                <?php if($row['notes']): ?>
+                                <div style="font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<?php echo htmlspecialchars($row['notes']); ?>">
+                                    <?php echo htmlspecialchars($row['notes']); ?>
+                                </div>
+                                <?php else: ?>
+                                <span style="color: var(--text-muted);">-</span>
+                                <?php endif; ?>
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <?php if($booking['status'] == 'pending'): ?>
-                                    <button class="btn btn-success btn-sm" onclick="updateStatus(<?php echo $booking['id']; ?>, 'confirmed', 'booking')" title="Accept">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button class="btn btn-danger btn-sm" onclick="updateStatus(<?php echo $booking['id']; ?>, 'cancelled', 'booking')" title="Reject">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                    <?php endif; ?>
-                                    <button class="btn btn-secondary btn-sm" onclick="openModal('viewBookingModal<?php echo $booking['id']; ?>')" title="View Details">
+                                    <button class="btn btn-secondary btn-sm" onclick="openModal('viewModal<?php echo $row['id']; ?>')" title="View Details">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    <button class="btn btn-danger btn-sm" onclick="deleteRow(<?php echo $booking['id']; ?>, 'booking')" title="Delete">
+                                    <button class="btn btn-danger btn-sm" onclick="deleteRow(<?php echo $row['id']; ?>, 'appointment')" title="Delete">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
                                 
                                 <!-- View Modal -->
-                                <div id="viewBookingModal<?php echo $booking['id']; ?>" class="modal">
-                                    <div class="modal-content" style="max-width: 700px;">
+                                <div id="viewModal<?php echo $row['id']; ?>" class="modal">
+                                    <div class="modal-content" style="max-width: 600px;">
                                         <div class="modal-header">
-                                            <h2><i class="fas fa-calendar-check"></i> Booking #<?php echo $booking['id']; ?> Details</h2>
-                                            <button class="modal-close" onclick="closeModal('viewBookingModal<?php echo $booking['id']; ?>')">&times;</button>
+                                            <h2><i class="fas fa-calendar-check"></i> Appointment #<?php echo $row['id']; ?> Details</h2>
+                                            <button class="modal-close" onclick="closeModal('viewModal<?php echo $row['id']; ?>')">&times;</button>
                                         </div>
                                         <div class="modal-body">
                                             <div class="info-grid">
-                                                <div class="info-item">
-                                                    <div class="info-item-label">Owner Name</div>
-                                                    <div class="info-item-value"><?php echo htmlspecialchars($booking['owner_name'] ?? 'N/A'); ?></div>
-                                                </div>
-                                                <div class="info-item">
-                                                    <div class="info-item-label">Email</div>
-                                                    <div class="info-item-value"><?php echo htmlspecialchars($booking['email'] ?? '-'); ?></div>
-                                                </div>
-                                                <div class="info-item">
-                                                    <div class="info-item-label">Phone Number</div>
-                                                    <div class="info-item-value"><?php echo htmlspecialchars($booking['phone'] ?? '-'); ?></div>
-                                                </div>
-                                                <div class="info-item">
-                                                    <div class="info-item-label">City/Area</div>
-                                                    <div class="info-item-value"><?php echo htmlspecialchars($booking['city'] ?? '-'); ?></div>
-                                                </div>
-                                                <div class="info-item">
-                                                    <div class="info-item-label">Pet Name</div>
-                                                    <div class="info-item-value"><?php echo htmlspecialchars($booking['pet_name'] ?? 'N/A'); ?></div>
-                                                </div>
-                                                <div class="info-item">
-                                                    <div class="info-item-label">Pet Category</div>
-                                                    <div class="info-item-value"><?php echo htmlspecialchars($booking['pet_type'] ?? '-'); ?></div>
-                                                </div>
-                                                <div class="info-item">
-                                                    <div class="info-item-label">Breed</div>
-                                                    <div class="info-item-value"><?php echo htmlspecialchars($booking['breed'] ?? '-'); ?></div>
-                                                </div>
-                                                <div class="info-item">
-                                                    <div class="info-item-label">Size/Type</div>
-                                                    <div class="info-item-value"><?php echo htmlspecialchars($booking['pet_size'] ?? '-'); ?></div>
-                                                </div>
-                                                <div class="info-item">
-                                                    <div class="info-item-label">Age</div>
-                                                    <div class="info-item-value"><?php echo htmlspecialchars($booking['pet_age'] ?? '-'); ?> years</div>
-                                                </div>
-                                                <div class="info-item">
-                                                    <div class="info-item-label">Vaccinated</div>
-                                                    <div class="info-item-value"><?php echo $booking['vaccinated'] ? 'Yes' : 'No'; ?></div>
-                                                </div>
-                                                <div class="info-item" style="grid-column: span 2;">
-                                                    <div class="info-item-label">Special Notes</div>
-                                                    <div class="info-item-value"><?php echo htmlspecialchars($booking['pet_notes'] ?? 'None'); ?></div>
-                                                </div>
-                                                <div class="info-item">
-                                                    <div class="info-item-label">Service</div>
-                                                    <div class="info-item-value"><?php echo htmlspecialchars($booking['service_name'] ?? 'N/A'); ?></div>
-                                                </div>
-                                                <div class="info-item">
-                                                    <div class="info-item-label">Price</div>
-                                                    <div class="info-item-value" style="color: var(--success);">$<?php echo number_format($booking['total_price'] ?: $booking['price'], 2); ?></div>
-                                                </div>
-                                                <div class="info-item">
-                                                    <div class="info-item-label">Check-in Date</div>
-                                                    <div class="info-item-value"><?php echo date('M d, Y', strtotime($booking['booking_date'])); ?></div>
-                                                </div>
-                                                <div class="info-item">
-                                                    <div class="info-item-label">Check-in Time</div>
-                                                    <div class="info-item-value"><?php echo htmlspecialchars($booking['start_time'] ?? '-'); ?></div>
-                                                </div>
-                                                <div class="info-item" style="grid-column: span 2;">
-                                                    <div class="info-item-label">Additional Notes</div>
-                                                    <div class="info-item-value"><?php echo htmlspecialchars($booking['notes'] ?? 'None'); ?></div>
-                                                </div>
+                                                <div class="info-item"><div class="info-item-label">Owner Name</div><div class="info-item-value"><?php echo htmlspecialchars($row['owner_name']); ?></div></div>
+                                                <div class="info-item"><div class="info-item-label">Email</div><div class="info-item-value"><?php echo htmlspecialchars($row['email']); ?></div></div>
+                                                <div class="info-item"><div class="info-item-label">Phone</div><div class="info-item-value"><?php echo htmlspecialchars($row['phone']); ?></div></div>
+                                                <div class="info-item"><div class="info-item-label">Pet Name</div><div class="info-item-value"><?php echo htmlspecialchars($row['pet_name']); ?></div></div>
+                                                <div class="info-item"><div class="info-item-label">Pet Category</div><div class="info-item-value"><?php echo htmlspecialchars($row['pet_category']); ?></div></div>
+                                                <div class="info-item"><div class="info-item-label">Breed</div><div class="info-item-value"><?php echo htmlspecialchars($row['breed']); ?></div></div>
+                                                <div class="info-item"><div class="info-item-label">Size</div><div class="info-item-value"><?php echo htmlspecialchars($row['pet_size']); ?></div></div>
+                                                <div class="info-item"><div class="info-item-label">Number of Pets</div><div class="info-item-value"><?php echo $row['pet_count']; ?></div></div>
+                                                <?php if($row['multi_pet_note']): ?>
+                                                <div class="info-item" style="grid-column: span 2;"><div class="info-item-label">Multi-Pet Note</div><div class="info-item-value"><?php echo htmlspecialchars($row['multi_pet_note']); ?></div></div>
+                                                <?php endif; ?>
+                                                <div class="info-item"><div class="info-item-label">Main Service</div><div class="info-item-value"><?php echo htmlspecialchars($row['main_service']); ?></div></div>
+                                                <?php if($row['addons']): ?>
+                                                <div class="info-item"><div class="info-item-label">Add-ons</div><div class="info-item-value"><?php echo htmlspecialchars($row['addons']); ?></div></div>
+                                                <?php endif; ?>
+                                                <div class="info-item"><div class="info-item-label">Date</div><div class="info-item-value"><?php echo date('M d, Y', strtotime($row['appointment_date'])); ?></div></div>
+                                                <div class="info-item"><div class="info-item-label">Time</div><div class="info-item-value"><?php echo htmlspecialchars($row['appointment_time']); ?></div></div>
+                                                <div class="info-item" style="grid-column: span 2;"><div class="info-item-label">Notes</div><div class="info-item-value"><?php echo htmlspecialchars($row['notes'] ?: 'None'); ?></div></div>
+                                                <div class="info-item" style="grid-column: span 2;"><div class="info-item-label">Created</div><div class="info-item-value"><?php echo date('M d, Y h:i A', strtotime($row['created_at'])); ?></div></div>
                                             </div>
                                         </div>
                                         <div class="modal-footer" style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); display: flex; gap: 12px; justify-content: flex-end;">
-                                            <button class="btn btn-secondary" onclick="closeModal('viewBookingModal<?php echo $booking['id']; ?>')">
-                                                <i class="fas fa-times"></i> Close
-                                            </button>
-                                            <?php if($booking['status'] == 'pending'): ?>
-                                            <button class="btn btn-success" onclick="updateStatus(<?php echo $booking['id']; ?>, 'confirmed', 'booking'); closeModal('viewBookingModal<?php echo $booking['id']; ?>');">
-                                                <i class="fas fa-check"></i> Accept Booking
-                                            </button>
-                                            <?php endif; ?>
+                                            <button class="btn btn-secondary" onclick="closeModal('viewModal<?php echo $row['id']; ?>')"><i class="fas fa-times"></i> Close</button>
                                         </div>
                                     </div>
                                 </div>
@@ -245,13 +280,11 @@ $service_list = mysqli_query($conn, "SELECT id, name, price FROM services WHERE 
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="8" style="text-align: center; padding: 60px;">
+                            <td colspan="7" style="text-align: center; padding: 60px;">
                                 <div class="empty-state">
-                                    <div class="empty-state-icon">
-                                        <i class="fas fa-calendar-check"></i>
-                                    </div>
-                                    <h3>No Bookings Found</h3>
-                                    <p>There are no bookings yet. New appointments will appear here.</p>
+                                    <div class="empty-state-icon"><i class="fas fa-calendar-check"></i></div>
+                                    <h3>No Appointments Found</h3>
+                                    <p>There are no appointments matching your criteria.</p>
                                 </div>
                             </td>
                         </tr>
@@ -259,62 +292,42 @@ $service_list = mysqli_query($conn, "SELECT id, name, price FROM services WHERE 
                 </tbody>
             </table>
         </div>
+        
+        <!-- Pagination -->
+        <?php if ($totalPages > 1): ?>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; flex-wrap: wrap; gap: 16px;">
+            <div style="color: var(--text-muted); font-size: 14px;">
+                Showing <?php echo min($totalRecords, $offset + 1); ?> to <?php echo min($totalRecords, $offset + $perPage); ?> of <?php echo $totalRecords; ?> records
+            </div>
+            <div class="pagination">
+                <?php 
+                $queryParams = $_GET;
+                unset($queryParams['page']);
+                $baseUrl = '?' . http_build_query($queryParams);
+                $baseUrl = $baseUrl === '?' ? '?' : $baseUrl . '&';
+                ?>
+                <?php if ($page > 1): ?>
+                <a href="<?php echo $baseUrl; ?>page=<?php echo $page - 1; ?>" class="pagination-btn">&laquo; Prev</a>
+                <?php endif; ?>
+                
+                <?php for ($i = max(1, $page - 2); $i <= min($totalPages, $page + 2); $i++): ?>
+                <a href="<?php echo $baseUrl; ?>page=<?php echo $i; ?>" class="pagination-btn <?php echo $i == $page ? 'active' : ''; ?>"><?php echo $i; ?></a>
+                <?php endfor; ?>
+                
+                <?php if ($page < $totalPages): ?>
+                <a href="<?php echo $baseUrl; ?>page=<?php echo $page + 1; ?>" class="pagination-btn">Next &raquo;</a>
+                <?php endif; ?>
+            </div>
+        </div>
+        <?php endif; ?>
     </div>
 </div>
 
-<!-- STATS SUMMARY -->
-<div class="stats-grid mt-24">
-    <div class="stat-card">
-        <div class="stat-card-icon">📊</div>
-        <div class="stat-card-value"><?php echo mysqli_num_rows($bookings); ?></div>
-        <div class="stat-card-label">Total Bookings</div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-card-icon">⏳</div>
-        <div class="stat-card-value"><?php echo mysqli_num_rows(mysqli_query($conn, "SELECT id FROM bookings WHERE status = 'pending'")); ?></div>
-        <div class="stat-card-label">Pending</div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-card-icon">✅</div>
-        <div class="stat-card-value"><?php echo mysqli_num_rows(mysqli_query($conn, "SELECT id FROM bookings WHERE status = 'confirmed'")); ?></div>
-        <div class="stat-card-label">Confirmed</div>
-    </div>
-
-    <div class="stat-card">
-        <div class="stat-card-icon">💰</div>
-        <div class="stat-card-value">$<?php echo number_format(mysqli_fetch_assoc(mysqli_query($conn, "SELECT COALESCE(SUM(total_price), 0) as total FROM bookings WHERE status = 'completed'"))['total'], 2); ?></div>
-        <div class="stat-card-label">Total Revenue</div>
-    </div>
-</div>
+<style>
+.pagination { display: flex; gap: 8px; flex-wrap: wrap; }
+.pagination-btn { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; text-decoration: none; color: var(--text); font-size: 14px; transition: all 0.2s; }
+.pagination-btn:hover { background: var(--bg-soft); }
+.pagination-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+</style>
 
 <?php require_once 'includes/footer.php'; ?>
-
-<script>
-function filterByStatus() {
-    const statusFilter = document.getElementById('statusFilter').value;
-    const rows = document.querySelectorAll('#bookingsTable tbody tr');
-    
-    rows.forEach(row => {
-        if (statusFilter === '' || row.getAttribute('data-status') === statusFilter) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
-}
-
-function filterByPetType() {
-    const petTypeFilter = document.getElementById('petTypeFilter').value;
-    const rows = document.querySelectorAll('#bookingsTable tbody tr');
-    
-    rows.forEach(row => {
-        if (petTypeFilter === '' || row.getAttribute('data-pet-type') === petTypeFilter) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
-    });
-}
-</script>

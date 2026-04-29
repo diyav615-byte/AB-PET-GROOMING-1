@@ -24,10 +24,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     exit;
 }
 
-$reviews = mysqli_query($conn, "SELECT r.*, c.name as customer_name 
-    FROM reviews r 
-    LEFT JOIN customers c ON r.customer_id = c.id 
-    ORDER BY r.id DESC");
+$reviews = mysqli_query($conn, "SELECT * FROM reviews ORDER BY id DESC");
 ?>
 
 <!-- PAGE HEADER -->
@@ -66,12 +63,12 @@ $reviews = mysqli_query($conn, "SELECT r.*, c.name as customer_name
                                 <strong style="color: var(--primary);">#<?php echo $review['id']; ?></strong>
                             </td>
                             <td>
-                                <div style="font-weight: 600;"><?php echo htmlspecialchars($review['name'] ?? $review['customer_name'] ?? 'Anonymous'); ?></div>
+                                <div style="font-weight: 600;"><?php echo htmlspecialchars($review['name'] ?? 'Anonymous'); ?></div>
                             </td>
                             <td>
                                 <div class="rating-stars">
                                     <?php for($i = 1; $i <= 5; $i++): ?>
-                                        <i class="fas fa-star <?php echo $i <= $review['rating'] ? '' : 'empty'; ?>"></i>
+                                        <i class="fas fa-star <?php echo $i <= $review['rating'] ? '' : 'empty-star'; ?>"></i>
                                     <?php endfor; ?>
                                 </div>
                                 <div style="font-size: 12px; color: var(--text-muted);"><?php echo $review['rating']; ?>/5</div>
@@ -83,11 +80,9 @@ $reviews = mysqli_query($conn, "SELECT r.*, c.name as customer_name
                             </td>
                             <td>
                                 <?php 
-                                $status_class = match($review['status']) {
-                                    'approved' => 'status-approved',
-                                    'rejected' => 'status-rejected',
-                                    default => 'status-pending'
-                                };
+                                $status_class = 'status-pending';
+                                if ($review['status'] === 'approved') $status_class = 'status-approved';
+                                elseif ($review['status'] === 'rejected') $status_class = 'status-rejected';
                                 ?>
                                 <span class="status-badge <?php echo $status_class; ?>">
                                     <?php echo ucfirst($review['status']); ?>

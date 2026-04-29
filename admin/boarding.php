@@ -106,9 +106,9 @@ $status_options = ['active', 'completed', 'cancelled'];
                                 </div>
                             </td>
                             <td>
-                                <div><i class="fas fa-sign-in"></i> <?php echo date('M d, Y', strtotime($row['checkin_date'])); ?></div>
+                                <div><i class="fas fa-sign-in"></i> <?php echo !empty($row['checkin_date']) ? date('M d, Y', strtotime($row['checkin_date'])) : '-'; ?></div>
                                 <div style="font-size: 12px; color: var(--text-muted);">
-                                    <i class="fas fa-sign-out"></i> <?php echo $row['checkout_date'] ? date('M d, Y', strtotime($row['checkout_date'])) : '-'; ?>
+                                    <i class="fas fa-sign-out"></i> <?php echo !empty($row['checkout_date']) ? date('M d, Y', strtotime($row['checkout_date'])) : '-'; ?>
                                 </div>
                             </td>
                             <td>
@@ -196,11 +196,11 @@ $status_options = ['active', 'completed', 'cancelled'];
                                                 </div>
                                                 <div class="info-item">
                                                     <div class="info-item-label">Check-in Date</div>
-                                                    <div class="info-item-value"><?php echo date('M d, Y', strtotime($row['checkin_date'])); ?></div>
+                                                    <div class="info-item-value"><?php echo !empty($row['checkin_date']) ? date('M d, Y', strtotime($row['checkin_date'])) : '-'; ?></div>
                                                 </div>
                                                 <div class="info-item">
                                                     <div class="info-item-label">Check-out Date</div>
-                                                    <div class="info-item-value"><?php echo $row['checkout_date'] ? date('M d, Y', strtotime($row['checkout_date'])) : '-'; ?></div>
+                                                    <div class="info-item-value"><?php echo !empty($row['checkout_date']) ? date('M d, Y', strtotime($row['checkout_date'])) : '-'; ?></div>
                                                 </div>
                                                 <div class="info-item">
                                                     <div class="info-item-label">Vaccinated</div>

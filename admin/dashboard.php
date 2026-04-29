@@ -4,35 +4,48 @@ require_once 'includes/header.php';
 
 include '../config/db.php';
 
-$total_bookings = mysqli_num_rows(mysqli_query($conn, "SELECT id FROM bookings"));
-$total_revenue = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COALESCE(SUM(total_price), 0) as total FROM bookings WHERE status = 'completed'"))['total'];
-$pending_requests = mysqli_num_rows(mysqli_query($conn, "SELECT id FROM bookings WHERE status = 'pending'"));
-$total_customers = mysqli_num_rows(mysqli_query($conn, "SELECT id FROM customers"));
+// Get stats from appointments table
+$total_appointments = mysqli_num_rows(mysqli_query($conn, "SELECT id FROM appointments"));
+$today = date('Y-m-d');
+$today_appointments = mysqli_num_rows(mysqli_query($conn, "SELECT id FROM appointments WHERE appointment_date = '$today'"));
+$upcoming = mysqli_num_rows(mysqli_query($conn, "SELECT id FROM appointments WHERE appointment_date >= '$today'"));
+$total_customers = mysqli_num_rows(mysqli_query($conn, "SELECT DISTINCT phone FROM appointments"));
 
-$recent_bookings = mysqli_query($conn, "SELECT b.*, c.name as customer_name, c.email as customer_email, c.phone as customer_phone, p.name as pet_name, p.type as pet_type, p.breed as pet_breed, s.name as service_name 
-    FROM bookings b 
-    LEFT JOIN customers c ON b.customer_id = c.id 
-    LEFT JOIN pets p ON b.pet_id = p.id 
-    LEFT JOIN services s ON b.service_id = s.id 
-    ORDER BY b.id DESC LIMIT 5");
+// Get recent appointments
+$recent = mysqli_query($conn, "SELECT * FROM appointments ORDER BY id DESC LIMIT 5");
 
-$daily_data = [
-    'labels' => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    'bookings' => [8, 12, 10, 15, 9, 18, 12],
-    'revenue' => [320, 480, 400, 600, 360, 720, 480]
-];
+// Get appointments by date for charts (last 7 days)
+$daily_labels = [];
+$daily_counts = [];
+for ($i = 6; $i >= 0; $i--) {
+    $date = date('Y-m-d', strtotime("-$i days"));
+    $day = date('D', strtotime($date));
+    $count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as cnt FROM appointments WHERE appointment_date = '$date'"))['cnt'];
+    $daily_labels[] = $day;
+    $daily_counts[] = $count;
+}
 
-$weekly_data = [
-    'labels' => ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-    'bookings' => [45, 52, 48, 65],
-    'revenue' => [1800, 2080, 1920, 2600]
-];
+// Weekly (last 4 weeks)
+$weekly_labels = [];
+$weekly_counts = [];
+for ($i = 3; $i >= 0; $i--) {
+    $week_start = date('Y-m-d', strtotime("-" . ($i * 7 + 7) . " days"));
+    $week_end = date('Y-m-d', strtotime("-" . ($i * 7) . " days"));
+    $count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as cnt FROM appointments WHERE appointment_date BETWEEN '$week_start' AND '$week_end'"))['cnt'];
+    $weekly_labels[] = "Week " . (4 - $i);
+    $weekly_counts[] = $count;
+}
 
-$monthly_data = [
-    'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    'bookings' => [120, 145, 160, 155, 180, 195],
-    'revenue' => [4800, 5800, 6400, 6200, 7200, 7800]
-];
+// Monthly (last 6 months)
+$monthly_labels = [];
+$monthly_counts = [];
+for ($i = 5; $i >= 0; $i--) {
+    $month = date('M', strtotime("-$i months"));
+    $year_month = date('Y-m', strtotime("-$i months"));
+    $count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as cnt FROM appointments WHERE appointment_date LIKE '$year_month%'"))['cnt'];
+    $monthly_labels[] = $month;
+    $monthly_counts[] = $count;
+}
 ?>
 
 <!-- PAGE HEADER -->
@@ -45,37 +58,73 @@ $monthly_data = [
 <div class="stats-grid">
     <div class="stat-card">
         <div class="stat-card-icon">📅</div>
-        <div class="stat-card-value"><?php echo $total_bookings; ?></div>
-        <div class="stat-card-label">Total Bookings</div>
-        <div class="stat-card-trend up">
-            <i class="fas fa-arrow-up"></i>
-            <span>12% from last month</span>
-        </div>
+        <div class="stat-card-value"><?php echo $total_appointments; ?></div>
+        <div class="stat-card-label">Total Appointments</div>
     </div>
 
     <div class="stat-card">
-        <div class="stat-card-icon">💰</div>
-        <div class="stat-card-value">$<?php echo number_format($total_revenue, 2); ?></div>
-        <div class="stat-card-label">Total Revenue</div>
-        <div class="stat-card-trend up">
-            <i class="fas fa-arrow-up"></i>
-            <span>8% from last month</span>
-        </div>
+        <div class="stat-card-icon">📆</div>
+        <div class="stat-card-value"><?php echo $today_appointments; ?></div>
+        <div class="stat-card-label">Today's Appointments</div>
     </div>
 
     <div class="stat-card">
-        <div class="stat-card-icon">⏳</div>
-        <div class="stat-card-value"><?php echo $pending_requests; ?></div>
-        <div class="stat-card-label">Pending Requests</div>
+        <div class="stat-card-icon">⏰</div>
+        <div class="stat-card-value"><?php echo $upcoming; ?></div>
+        <div class="stat-card-label">Upcoming</div>
     </div>
 
     <div class="stat-card">
         <div class="stat-card-icon">👥</div>
         <div class="stat-card-value"><?php echo $total_customers; ?></div>
         <div class="stat-card-label">Total Customers</div>
-        <div class="stat-card-trend up">
-            <i class="fas fa-arrow-up"></i>
-            <span>5% from last month</span>
+    </div>
+</div>
+
+<!-- QUICK STATS -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px;">
+    <div class="card" style="padding: 20px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="font-size: 32px;">🐕</div>
+            <div>
+                <div style="font-size: 24px; font-weight: 700;">
+                    <?php echo mysqli_num_rows(mysqli_query($conn, "SELECT id FROM appointments WHERE pet_category = 'Dog'")); ?>
+                </div>
+                <div style="font-size: 13px; color: var(--text-muted);">Dog Appointments</div>
+            </div>
+        </div>
+    </div>
+    <div class="card" style="padding: 20px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="font-size: 32px;">🐱</div>
+            <div>
+                <div style="font-size: 24px; font-weight: 700;">
+                    <?php echo mysqli_num_rows(mysqli_query($conn, "SELECT id FROM appointments WHERE pet_category = 'Cat'")); ?>
+                </div>
+                <div style="font-size: 13px; color: var(--text-muted);">Cat Appointments</div>
+            </div>
+        </div>
+    </div>
+    <div class="card" style="padding: 20px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="font-size: 32px;">🛁</div>
+            <div>
+                <div style="font-size: 24px; font-weight: 700;">
+                    <?php echo mysqli_num_rows(mysqli_query($conn, "SELECT id FROM appointments WHERE main_service LIKE '%Classic%'")); ?>
+                </div>
+                <div style="font-size: 13px; color: var(--text-muted);">Classic Packages</div>
+            </div>
+        </div>
+    </div>
+    <div class="card" style="padding: 20px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="font-size: 32px;">✨</div>
+            <div>
+                <div style="font-size: 24px; font-weight: 700;">
+                    <?php echo mysqli_num_rows(mysqli_query($conn, "SELECT id FROM appointments WHERE addons != '' AND addons IS NOT NULL")); ?>
+                </div>
+                <div style="font-size: 13px; color: var(--text-muted);">With Add-ons</div>
+            </div>
         </div>
     </div>
 </div>
@@ -84,7 +133,7 @@ $monthly_data = [
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px; margin-bottom: 32px;">
     <div class="card">
         <div class="card-header">
-            <h2>Daily Bookings</h2>
+            <h2>Daily Appointments (Last 7 Days)</h2>
         </div>
         <div class="card-body">
             <div class="chart-container">
@@ -95,7 +144,7 @@ $monthly_data = [
 
     <div class="card">
         <div class="card-header">
-            <h2>Weekly Trends</h2>
+            <h2>Weekly Trends (Last 4 Weeks)</h2>
         </div>
         <div class="card-body">
             <div class="chart-container">
@@ -108,7 +157,7 @@ $monthly_data = [
 <!-- MONTHLY CHART -->
 <div class="card">
     <div class="card-header">
-        <h2>Monthly Overview</h2>
+        <h2>Monthly Overview (Last 6 Months)</h2>
     </div>
     <div class="card-body">
         <div class="chart-container" style="height: 350px;">
@@ -117,10 +166,10 @@ $monthly_data = [
     </div>
 </div>
 
-<!-- RECENT BOOKINGS -->
+<!-- RECENT APPOINTMENTS -->
 <div class="card mt-24">
     <div class="card-header">
-        <h2>Recent Bookings</h2>
+        <h2>Recent Appointments</h2>
         <a href="bookings.php" class="btn btn-primary btn-sm">
             <i class="fas fa-eye"></i>
             View All
@@ -132,42 +181,60 @@ $monthly_data = [
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Customer</th>
+                        <th>Owner</th>
                         <th>Pet</th>
                         <th>Service</th>
-                        <th>Date</th>
+                        <th>Date & Time</th>
                         <th>Status</th>
-                        <th>Price</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if(mysqli_num_rows($recent_bookings) > 0): ?>
-                        <?php while($booking = mysqli_fetch_assoc($recent_bookings)): ?>
+                    <?php if(mysqli_num_rows($recent) > 0): ?>
+                        <?php while($row = mysqli_fetch_assoc($recent)): ?>
                         <tr>
-                            <td><strong>#<?php echo $booking['id']; ?></strong></td>
+                            <td><strong>#<?php echo $row['id']; ?></strong></td>
                             <td>
-                                <div style="font-weight: 500;"><?php echo htmlspecialchars($booking['customer_name'] ?? 'N/A'); ?></div>
-                                <div style="font-size: 11px; color: var(--text-muted);"><?php echo htmlspecialchars($booking['customer_email'] ?? ''); ?></div>
+                                <div style="font-weight: 500;"><?php echo htmlspecialchars($row['owner_name']); ?></div>
+                                <div style="font-size: 11px; color: var(--text-muted);"><?php echo htmlspecialchars($row['phone']); ?></div>
                             </td>
                             <td>
-                                <div style="font-weight: 500;"><?php echo htmlspecialchars($booking['pet_name'] ?? 'N/A'); ?></div>
-                                <div style="font-size: 11px; color: var(--text-muted);"><?php echo htmlspecialchars($booking['pet_breed'] ?? ''); ?></div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 20px;">
+                                        <?php if($row['pet_category'] == 'Dog'): ?><i class="fas fa-dog"></i>
+                                        <?php elseif($row['pet_category'] == 'Cat'): ?><i class="fas fa-cat"></i>
+                                        <?php else: ?><i class="fas fa-paw"></i>
+                                        <?php endif; ?>
+                                    </span>
+                                    <div>
+                                        <div style="font-weight: 500;"><?php echo htmlspecialchars($row['pet_name']); ?></div>
+                                        <div style="font-size: 11px; color: var(--text-muted);"><?php echo htmlspecialchars($row['breed']); ?></div>
+                                    </div>
+                                </div>
                             </td>
-                            <td><?php echo htmlspecialchars($booking['service_name'] ?? 'N/A'); ?></td>
-                            <td><?php echo date('M d, Y', strtotime($booking['booking_date'])); ?></td>
                             <td>
-                                <span class="status-badge status-<?php echo $booking['status']; ?>">
-                                    <?php echo ucfirst($booking['status']); ?>
-                                </span>
+                                <div><?php echo htmlspecialchars($row['main_service']); ?></div>
+                                <?php if($row['addons']): ?>
+                                <div style="font-size: 11px; color: var(--text-muted);">+ <?php echo htmlspecialchars($row['addons']); ?></div>
+                                <?php endif; ?>
                             </td>
-                            <td><strong>$<?php echo number_format($booking['total_price'], 2); ?></strong></td>
+                            <td>
+                                <div><?php echo date('M d, Y', strtotime($row['appointment_date'])); ?></div>
+                                <div style="font-size: 11px; color: var(--text-muted);"><?php echo $row['appointment_time']; ?></div>
+                            </td>
+                            <td>
+                                <?php if($row['appointment_date'] >= $today): ?>
+                                <span class="status-badge status-info">Upcoming</span>
+                                <?php else: ?>
+                                <span class="status-badge status-success">Completed</span>
+                                <?php endif; ?>
+                            </td>
                         </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="7" style="text-align: center; padding: 40px;">
+                            <td colspan="6" style="text-align: center; padding: 40px;">
                                 <i class="fas fa-calendar-check" style="font-size: 32px; color: var(--text-muted);"></i>
-                                <p style="margin-top: 12px; color: var(--text-light);">No bookings yet</p>
+                                <p style="margin-top: 12px; color: var(--text-light);">No appointments yet</p>
                             </td>
                         </tr>
                     <?php endif; ?>
@@ -182,22 +249,22 @@ $monthly_data = [
 <script>
     // Daily Chart
     createBarChart('dailyChart', 
-        <?php echo json_encode($daily_data['labels']); ?>,
-        <?php echo json_encode($daily_data['bookings']); ?>,
-        'Daily Bookings'
+        <?php echo json_encode($daily_labels); ?>,
+        <?php echo json_encode($daily_counts); ?>,
+        'Daily Appointments'
     );
 
     // Weekly Chart
     createLineChart('weeklyChart',
-        <?php echo json_encode($weekly_data['labels']); ?>,
-        <?php echo json_encode($weekly_data['bookings']); ?>,
-        'Weekly Bookings'
+        <?php echo json_encode($weekly_labels); ?>,
+        <?php echo json_encode($weekly_counts); ?>,
+        'Weekly Appointments'
     );
 
     // Monthly Chart
     createLineChart('monthlyChart',
-        <?php echo json_encode($monthly_data['labels']); ?>,
-        <?php echo json_encode($monthly_data['bookings']); ?>,
-        'Monthly Bookings'
+        <?php echo json_encode($monthly_labels); ?>,
+        <?php echo json_encode($monthly_counts); ?>,
+        'Monthly Appointments'
     );
 </script>

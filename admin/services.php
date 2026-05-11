@@ -1,229 +1,305 @@
 <?php
-$page_title = "Add Services";
-require_once 'includes/header.php';
-
 include '../config/db.php';
 
-// Handle add/edit/delete service
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['add_service'])) {
-        $name = $_POST['name'];
-        $price = $_POST['price'];
-        $description = $_POST['description'];
-        $category = $_POST['category'];
-        
-        mysqli_query($conn, "INSERT INTO services (name, price, description, category, active) VALUES ('$name', '$price', '$description', '$category', 1)");
-        $_SESSION['toast'] = ['message' => 'Service added successfully!', 'type' => 'success'];
-    } elseif (isset($_POST['update_service'])) {
-        $id = $_POST['id'];
-        $name = $_POST['name'];
-        $price = $_POST['price'];
-        $description = $_POST['description'];
-        $category = $_POST['category'];
-        
-        mysqli_query($conn, "UPDATE services SET name = '$name', price = '$price', description = '$description', category = '$category' WHERE id = $id");
-        $_SESSION['toast'] = ['message' => 'Service updated successfully!', 'type' => 'success'];
-    }
-    header('Location: services.php');
-    exit;
-}
-
-// Handle delete service
-if (isset($_GET['delete'])) {
+// DELETE
+if(isset($_GET['delete'])){
     $id = (int)$_GET['delete'];
-    mysqli_query($conn, "DELETE FROM services WHERE id = $id");
-    $_SESSION['toast'] = ['message' => 'Service deleted!', 'type' => 'success'];
-    header('Location: services.php');
+    mysqli_query($conn, "DELETE FROM service_cards WHERE id=$id");
+    header("Location: services.php");
     exit;
 }
 
-// Handle toggle active
-if (isset($_GET['toggle'])) {
-    $id = (int)$_GET['toggle'];
-    mysqli_query($conn, "UPDATE services SET active = NOT active WHERE id = $id");
-    header('Location: services.php');
+// EDIT FETCH
+$editData = null;
+$editItems = null;
+
+if(isset($_GET['edit'])){
+    $id = (int)$_GET['edit'];
+
+    $editData = mysqli_fetch_assoc(
+        mysqli_query($conn,"SELECT * FROM service_cards WHERE id=$id")
+    );
+
+    $editItems = mysqli_query($conn,
+        "SELECT * FROM service_card_items WHERE service_id=$id"
+    );
+}
+
+// ADD
+if(isset($_POST['add_service'])){
+    $title = mysqli_real_escape_string($conn, $_POST['title']);
+    $category =  mysqli_real_escape_string($conn, $_POST['category']);
+    mysqli_query($conn,"INSERT INTO service_cards (title,category) 
+    VALUES ('$title','$category')");
+
+    $service_id = mysqli_insert_id($conn);
+
+    saveItems($conn, $service_id);
+}
+
+// UPDATE
+if(isset($_POST['update_service'])){
+    $id = (int)$_GET['edit'];
+
+    $title = mysqli_real_escape_string($conn, $_POST['title']);
+    $category =  mysqli_real_escape_string($conn, $_POST['category']);
+
+    mysqli_query($conn,"UPDATE service_cards 
+    SET title='$title', category='$category' WHERE id=$id");
+
+    mysqli_query($conn,"DELETE FROM service_card_items WHERE service_id=$id");
+
+    saveItems($conn, $id);
+}
+
+// FUNCTION
+function saveItems($conn, $service_id){
+
+    // ITEMS
+    if(isset($_POST['item_name'])){
+        foreach($_POST['item_name'] as $key => $name){
+            $price = $_POST['item_price'][$key] ?: NULL;
+
+            if($name != ''){
+                mysqli_query($conn,"INSERT INTO service_card_items 
+                (service_id,type,name,price)
+                VALUES ('$service_id','item','$name',".($price ? "'$price'" : "NULL").")");
+            }
+        }
+    }
+
+    // BREEDS
+    if(isset($_POST['breed_name'])){
+        foreach($_POST['breed_name'] as $key => $name){
+            $price = $_POST['breed_price'][$key] ?: NULL;
+
+            if($name != ''){
+                mysqli_query($conn,"INSERT INTO service_card_items 
+                (service_id,type,name,price)
+                VALUES ('$service_id','breed','$name',".($price ? "'$price'" : "NULL").")");
+            }
+        }
+    }
+
+    header("Location: services.php");
     exit;
 }
 
-$services = mysqli_query($conn, "SELECT * FROM services ORDER BY id DESC");
-$categories = ['Grooming', 'Boarding', 'Spa', 'Training', 'Medical', 'Other'];
+// FETCH
+$services = mysqli_query($conn,"SELECT * FROM service_cards ORDER BY id ASC");
+
+$page_title = "Services";
+require_once 'includes/header.php';
 ?>
 
-PAGE HEADER
-<div class="page-header">
-    <h1>Services</h1>
-    <p>Add and manage your pet grooming services</p>
+<!-- ================= FORM ================= -->
+<div class="card admin-card">
+
+<form method="POST" class="admin-form">
+
+<h2 class="form-title">Manage Services</h2>
+
+<label>Title</label>
+<input type="text" name="title"
+value="<?php echo $editData['title'] ?? ''; ?>" required>
+
+<label>Category</label>
+<select name="category">
+  <option value="dog" <?php if(($editData['category'] ?? '')=='dog') echo 'selected'; ?>>Dog</option>
+  <option value="cat" <?php if(($editData['category'] ?? '')=='cat') echo 'selected'; ?>>Cat</option>
+</select>
+
+<!-- ITEMS -->
+<h3>Items</h3>
+<div id="items">
+
+<?php 
+if($editItems){
+while($i = mysqli_fetch_assoc($editItems)){
+if($i['type']=='item'){ ?>
+<div class="item-row">
+<input type="text" name="item_name[]" value="<?php echo $i['name']; ?>">
+<input type="number" name="item_price[]" value="<?php echo $i['price']; ?>">
+<button type="button" onclick="removeItem(this)">✖</button>
+</div>
+<?php } } } ?>
+
+<div class="item-row">
+<input type="text" name="item_name[]" placeholder="Service Item">
+<input type="number" name="item_price[]" placeholder="₹ Price">
+<button type="button" onclick="removeItem(this)">✖</button>
 </div>
 
-<!-- ADD SERVICE FORM -->
-<div class="card mb-24">
-    <div class="card-header">
-        <h2><i class="fas fa-plus-circle"></i> Add New Service</h2>
-    </div>
-    <div class="card-body">
-        <form method="POST" action="services.php">
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="fas fa-cut"></i> Service Name</label>
-                    <input type="text" name="name" placeholder="e.g., Full Grooming, Bath & Trim" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-tag"></i> Price ($)</label>
-                    <input type="number" name="price" placeholder="0.00" step="0.01" min="0" required>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="fas fa-folder"></i> Category</label>
-                    <select name="category" required>
-                        <option value="">Select Category</option>
-                        <?php foreach($categories as $cat): ?>
-                        <option value="<?php echo $cat; ?>"><?php echo $cat; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>&nbsp;</label>
-                    <button type="submit" name="add_service" class="btn btn-primary btn-block">
-                        <i class="fas fa-plus"></i> Add Service
-                    </button>
-                </div>
-            </div>
-            <div class="form-group">
-                <label><i class="fas fa-align-left"></i> Description</label>
-                <textarea name="description" placeholder="Describe what this service includes..."></textarea>
-            </div>
-        </form>
-    </div>
 </div>
 
-<!-- SERVICES LIST -->
-<div class="card">
-    <div class="card-header">
-        <h2><i class="fas fa-list"></i> Services List</h2>
-        <span style="color: var(--text-light); font-size: 14px;">
-            Total: <?php echo mysqli_num_rows($services); ?> services
-        </span>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Service Name</th>
-                        <th>Category</th>
-                        <th>Price</th>
-                        <th>Description</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if(mysqli_num_rows($services) > 0): ?>
-                        <?php while($service = mysqli_fetch_assoc($services)): ?>
-                        <tr>
-                            <td>
-                                <strong style="color: var(--primary);">#<?php echo $service['id']; ?></strong>
-                            </td>
-                            <td>
-                                <div style="font-weight: 600;"><?php echo htmlspecialchars($service['name']); ?></div>
-                            </td>
-                            <td>
-                                <span class="status-badge <?php echo $service['category'] === 'Grooming' ? 'status-confirmed' : ($service['category'] === 'Boarding' ? 'status-active' : 'status-pending'); ?>">
-                                    <?php echo htmlspecialchars($service['category']); ?>
-                                </span>
-                            </td>
-                            <td>
-                                <strong style="color: var(--success); font-size: 16px;">$<?php echo number_format($service['price'], 2); ?></strong>
-                            </td>
-                            <td>
-                                <div style="max-width: 250px; font-size: 13px; color: var(--text-light);">
-                                    <?php echo htmlspecialchars($service['description']); ?>
-                                </div>
-                            </td>
-                            <td>
-                                <?php if($service['active']): ?>
-                                <span class="status-badge status-approved">Active</span>
-                                <?php else: ?>
-                                <span class="status-badge status-cancelled">Inactive</span>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-secondary btn-sm" onclick="openModal('editServiceModal<?php echo $service['id']; ?>')" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <a href="services.php?toggle=<?php echo $service['id']; ?>" class="btn btn-<?php echo $service['active'] ? 'warning' : 'success'; ?> btn-sm" title="<?php echo $service['active'] ? 'Deactivate' : 'Activate'; ?>">
-                                        <i class="fas fa-<?php echo $service['active'] ? 'pause' : 'play'; ?>"></i>
-                                    </a>
-                                    <a href="services.php?delete=<?php echo $service['id']; ?>" class="btn btn-danger btn-sm" title="Delete" onclick="return confirm('Are you sure you want to delete this service?')">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
-                                </div>
+<button type="button" onclick="addItem()">+ Add Item</button>
 
-                                <!-- Edit Modal -->
-                                <div id="editServiceModal<?php echo $service['id']; ?>" class="modal">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h2><i class="fas fa-edit"></i> Edit Service</h2>
-                                            <button class="modal-close" onclick="closeModal('editServiceModal<?php echo $service['id']; ?>')">&times;</button>
-                                        </div>
-                                        <form method="POST" action="services.php">
-                                            <input type="hidden" name="id" value="<?php echo $service['id']; ?>">
-                                            <div class="form-group">
-                                                <label>Service Name</label>
-                                                <input type="text" name="name" value="<?php echo htmlspecialchars($service['name']); ?>" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Price ($)</label>
-                                                <input type="number" name="price" value="<?php echo $service['price']; ?>" step="0.01" min="0" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Category</label>
-                                                <select name="category" required>
-                                                    <?php foreach($categories as $cat): ?>
-                                                    <option value="<?php echo $cat; ?>" <?php echo $service['category'] === $cat ? 'selected' : ''; ?>>
-                                                        <?php echo $cat; ?>
-                                                    </option>
-                                                    <?php endforeach; ?>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Description</label>
-                                                <textarea name="description"><?php echo htmlspecialchars($service['description']); ?></textarea>
-                                            </div>
-                                            <div class="flex gap-16" style="margin-top: 20px;">
-                                                <button type="button" class="btn btn-secondary" onclick="closeModal('editServiceModal<?php echo $service['id']; ?>')" style="flex: 1;">
-                                                    Cancel
-                                                </button>
-                                                <button type="submit" name="update_service" class="btn btn-primary" style="flex: 1;">
-                                                    <i class="fas fa-save"></i> Save Changes
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <?php endwhile; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="7" style="text-align: center; padding: 60px;">
-                                <div class="empty-state">
-                                    <div class="empty-state-icon">
-                                        <i class="fas fa-cut"></i>
-                                    </div>
-                                    <h3>No Services Yet</h3>
-                                    <p>Add your first service using the form above.</p>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
+<!-- BREEDS -->
+<h3>Breed Pricing</h3>
+<div id="breeds">
+
+<?php 
+if($editItems){
+mysqli_data_seek($editItems,0);
+while($i = mysqli_fetch_assoc($editItems)){
+if($i['type']=='breed'){ ?>
+<div class="item-row">
+<input type="text" name="breed_name[]" value="<?php echo $i['name']; ?>">
+<input type="number" name="breed_price[]" value="<?php echo $i['price']; ?>">
+<button type="button" onclick="removeItem(this)">✖</button>
 </div>
+<?php } } } ?>
+
+<div class="item-row">
+<input type="text" name="breed_name[]" placeholder="Small / Large / Giant">
+<input type="number" name="breed_price[]" placeholder="₹ Price">
+<button type="button" onclick="removeItem(this)">✖</button>
+</div>
+
+</div>
+
+<button type="button" onclick="addBreed()">+ Add Breed</button>
+
+<br><br>
+
+<?php if($editData){ ?>
+<button type="submit" name="update_service" class="btn btn-primary">Update</button>
+<?php } else { ?>
+<button type="submit" name="add_service" class="btn btn-primary">Add</button>
+<?php } ?>
+
+</form>
+</div>
+
+
+<!-- ================= TABLE ================= -->
+<div class="card admin-card">
+
+<h2>All Services</h2>
+
+<table class="premium-table">
+
+<tr>
+<th>Title</th>
+<th>Category</th>
+<th>Items</th>
+<th>Action</th>
+</tr>
+
+<?php while($s = mysqli_fetch_assoc($services)): ?>
+<tr>
+
+<td><?php echo $s['title']; ?></td>
+
+<td><?php echo ucfirst($s['category']); ?></td>
+
+<td>
+<?php
+$items = mysqli_query($conn, "SELECT * FROM service_card_items WHERE service_id=".$s['id']);
+
+while($i = mysqli_fetch_assoc($items)){
+
+    echo "<div>";
+
+    echo $i['name'];
+
+    if($i['price']){
+        echo " - ₹".$i['price'];
+    }
+
+    echo " (".$i['type'].")";
+
+    echo "</div>";
+}
+?>
+
+
+</td>
+
+<td class="action-buttons">
+
+<a href="?edit=<?php echo $s['id']; ?>" 
+class="edit-btn">
+Edit
+</a>
+
+<a href="?delete=<?php echo $s['id']; ?>" 
+class="delete-btn"
+onclick="return confirm('Delete this service?')">
+Delete
+</a>
+
+</td>
+</tr>
+<?php endwhile; ?>
+
+</table>
+</div>
+
+
+<!-- ================= JS ================= -->
+<script>
+function addItem(){
+document.getElementById("items").innerHTML += `
+<div class="item-row">
+<input type="text" name="item_name[]" placeholder="Service Item">
+<input type="number" name="item_price[]" placeholder="₹ Price">
+<button type="button" onclick="removeItem(this)">✖</button>
+</div>`;
+}
+
+function addBreed(){
+document.getElementById("breeds").innerHTML += `
+<div class="item-row">
+<input type="text" name="breed_name[]" placeholder="Breed">
+<input type="number" name="breed_price[]" placeholder="₹ Price">
+<button type="button" onclick="removeItem(this)">✖</button>
+</div>`;
+}
+
+function removeItem(btn){
+btn.parentElement.remove();
+}
+</script>
+
+<style>
+.action-buttons{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.edit-btn{
+  background: linear-gradient(135deg,#7158a6,#7158a6);
+  color:#fff;
+  padding:8px 16px;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:14px;
+  transition:0.3s;
+}
+
+.edit-btn:hover{
+  transform:translateY(-2px);
+  opacity:0.9;
+}
+
+.delete-btn{
+  background: linear-gradient(135deg,#ff4d6d,#ff1744);
+  color:#fff;
+  padding:8px 16px;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:14px;
+  transition:0.3s;
+}
+
+.delete-btn:hover{
+  transform:translateY(-2px);
+  opacity:0.9;
+}
+</style>
 
 <?php require_once 'includes/footer.php'; ?>

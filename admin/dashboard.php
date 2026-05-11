@@ -12,7 +12,7 @@ $upcoming = mysqli_num_rows(mysqli_query($conn, "SELECT id FROM appointments WHE
 $total_customers = mysqli_num_rows(mysqli_query($conn, "SELECT DISTINCT phone FROM appointments"));
 
 // Get recent appointments
-$recent = mysqli_query($conn, "SELECT * FROM appointments ORDER BY id DESC LIMIT 5");
+$recent = mysqli_query($conn, "SELECT * FROM appointments ORDER BY id ASC LIMIT 5");
 
 // Get appointments by date for charts (last 7 days)
 $daily_labels = [];
@@ -57,25 +57,42 @@ for ($i = 5; $i >= 0; $i--) {
 <!-- STATS GRID -->
 <div class="stats-grid">
     <div class="stat-card">
-        <div class="stat-card-icon">📅</div>
+        <div class="stat-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+  <rect x="3" y="4" width="18" height="18" rx="2"/>
+  <line x1="16" y1="2" x2="16" y2="6"/>
+  <line x1="8" y1="2" x2="8" y2="6"/>
+  <line x1="3" y1="10" x2="21" y2="10"/>
+</svg></div>
         <div class="stat-card-value"><?php echo $total_appointments; ?></div>
         <div class="stat-card-label">Total Appointments</div>
     </div>
 
     <div class="stat-card">
-        <div class="stat-card-icon">📆</div>
+        <div class="stat-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+  <rect x="3" y="4" width="18" height="18" rx="2"/>
+  <line x1="16" y1="2" x2="16" y2="6"/>
+  <line x1="8" y1="2" x2="8" y2="6"/>
+  <line x1="3" y1="10" x2="21" y2="10"/>
+  <path d="M9 16l2 2 4-4"/>
+</svg></div>
         <div class="stat-card-value"><?php echo $today_appointments; ?></div>
         <div class="stat-card-label">Today's Appointments</div>
     </div>
 
     <div class="stat-card">
-        <div class="stat-card-icon">⏰</div>
+        <div class="stat-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+  <circle cx="12" cy="12" r="10"/>
+  <polyline points="12 6 12 12 16 14"/>
+</svg></div>
         <div class="stat-card-value"><?php echo $upcoming; ?></div>
         <div class="stat-card-label">Upcoming</div>
     </div>
 
     <div class="stat-card">
-        <div class="stat-card-icon">👥</div>
+        <div class="stat-card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+  <circle cx="12" cy="7" r="4"/>
+</svg></div>
         <div class="stat-card-value"><?php echo $total_customers; ?></div>
         <div class="stat-card-label">Total Customers</div>
     </div>
@@ -85,7 +102,9 @@ for ($i = 5; $i >= 0; $i--) {
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px;">
     <div class="card" style="padding: 20px;">
         <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="font-size: 32px;">🐕</div>
+            <div style="font-size: 32px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+  <path d="M5 12l2-7h10l2 7-2 7H7z"/>
+</svg></div>
             <div>
                 <div style="font-size: 24px; font-weight: 700;">
                     <?php echo mysqli_num_rows(mysqli_query($conn, "SELECT id FROM appointments WHERE pet_category = 'Dog'")); ?>
@@ -96,7 +115,9 @@ for ($i = 5; $i >= 0; $i--) {
     </div>
     <div class="card" style="padding: 20px;">
         <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="font-size: 32px;">🐱</div>
+            <div style="font-size: 32px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+  <path d="M12 2l3 3h4l1 4-2 3v7H6v-7L4 9l1-4h4z"/>
+</svg></div>
             <div>
                 <div style="font-size: 24px; font-weight: 700;">
                     <?php echo mysqli_num_rows(mysqli_query($conn, "SELECT id FROM appointments WHERE pet_category = 'Cat'")); ?>
@@ -107,7 +128,11 @@ for ($i = 5; $i >= 0; $i--) {
     </div>
     <div class="card" style="padding: 20px;">
         <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="font-size: 32px;">🛁</div>
+            <div style="font-size: 32px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+  <path d="M3 13h18v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+  <line x1="7" y1="13" x2="7" y2="5"/>
+  <line x1="17" y1="13" x2="17" y2="9"/>
+</svg></div>
             <div>
                 <div style="font-size: 24px; font-weight: 700;">
                     <?php echo mysqli_num_rows(mysqli_query($conn, "SELECT id FROM appointments WHERE main_service LIKE '%Classic%'")); ?>
@@ -118,7 +143,9 @@ for ($i = 5; $i >= 0; $i--) {
     </div>
     <div class="card" style="padding: 20px;">
         <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="font-size: 32px;">✨</div>
+            <div style="font-size: 32px;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+  <polygon points="12 2 15 9 22 9 17 14 19 21 12 17 5 21 7 14 2 9 9 9"/>
+</svg></div>
             <div>
                 <div style="font-size: 24px; font-weight: 700;">
                     <?php echo mysqli_num_rows(mysqli_query($conn, "SELECT id FROM appointments WHERE addons != '' AND addons IS NOT NULL")); ?>

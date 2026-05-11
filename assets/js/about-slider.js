@@ -70,3 +70,18 @@ document.addEventListener("DOMContentLoaded", function () {
   updateSlider(false);
   setInterval(autoSlide, 4000);
 });
+
+
+function scrollLeft(){
+  document.getElementById("testimonialContainer").scrollBy({
+    left: -300,
+    behavior: "smooth"
+  });
+}
+
+function scrollRight(){
+  document.getElementById("testimonialContainer").scrollBy({
+    left: 300,
+    behavior: "smooth"
+  });
+}

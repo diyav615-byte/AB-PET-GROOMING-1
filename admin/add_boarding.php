@@ -1,186 +1,423 @@
 <?php
-$page_title = "Add Boarding";
-require_once 'includes/header.php';
-
 include '../config/db.php';
 
-// Handle add boarding package
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['add_boarding'])) {
-        $owner_name = $_POST['owner_name'];
-        $phone = $_POST['phone'];
-        $email = $_POST['email'];
-        $city = $_POST['city'];
-        $pet_name = $_POST['pet_name'];
-        $pet_type = $_POST['pet_type'];
-        $plan = $_POST['plan'];
-        $breed = $_POST['breed'];
-        $age = $_POST['age'];
-        $gender = $_POST['gender'];
-        $boarding_type = $_POST['boarding_type'];
-        $emergency_contact = $_POST['emergency_contact'];
-        $checkin_date = $_POST['checkin_date'];
-        $checkout_date = $_POST['checkout_date'];
-        $vaccinated_confirm = $_POST['vaccinated_confirm'];
-        $notes = $_POST['notes'];
-        
-        $sql = "INSERT INTO boarding (owner_name, phone, email, city, pet_name, pet_type, plan, breed, age, gender, boarding_type, emergency_contact, checkin_date, checkout_date, vaccinated_confirm, notes, status) 
-               VALUES ('$owner_name', '$phone', '$email', '$city', '$pet_name', '$pet_type', '$plan', '$breed', '$age', '$gender', '$boarding_type', '$emergency_contact', '$checkin_date', '$checkout_date', '$vaccinated_confirm', '$notes', 'active')";
-        
-        mysqli_query($conn, $sql);
-        $_SESSION['toast'] = ['message' => 'Boarding package added successfully!', 'type' => 'success'];
-        header('Location: boarding.php');
-        exit;
+/* ================= ADD ================= */
+
+if(isset($_POST['add_boarding'])){
+
+    $name  = mysqli_real_escape_string($conn,$_POST['name']);
+    $price = mysqli_real_escape_string($conn,$_POST['price']);
+    $type  = mysqli_real_escape_string($conn,$_POST['type']);
+
+    mysqli_query($conn,"
+        INSERT INTO pet_boarding(name,price,type)
+        VALUES('$name','$price','$type')
+    ");
+
+   echo "<script>window.location='add_boarding.php';</script>";
+exit;
+}
+
+
+/* ================= UPDATE ================= */
+
+if(isset($_POST['update_boarding'])){
+
+    $id = (int)$_GET['edit'];
+
+    $name  = mysqli_real_escape_string($conn,$_POST['name']);
+    $price = mysqli_real_escape_string($conn,$_POST['price']);
+    $type  = mysqli_real_escape_string($conn,$_POST['type']);
+
+    mysqli_query($conn,"
+        UPDATE pet_boarding
+        SET
+        name='$name',
+        price='$price',
+        type='$type'
+        WHERE id=$id
+    ");
+
+    header("Location: add_boarding.php");
+    exit;
+}
+
+
+/* ================= DELETE ================= */
+
+if(isset($_GET['delete'])){
+
+    $id = (int)$_GET['delete'];
+
+    mysqli_query($conn,"
+        DELETE FROM pet_boarding
+        WHERE id=$id
+    ");
+
+    echo "<script>window.location='add_boarding.php';</script>";
+    exit;
+}
+
+
+/* ================= EDIT FETCH ================= */
+
+$editData = null;
+
+if(isset($_GET['edit'])){
+
+    $id = (int)$_GET['edit'];
+
+    $editData = mysqli_fetch_assoc(
+        mysqli_query($conn,"
+            SELECT * FROM pet_boarding
+            WHERE id=$id
+        ")
+    );
+}
+
+
+
+
+/* ================= FETCH ================= */
+
+$services = mysqli_query($conn,"
+    SELECT * FROM pet_boarding
+    ORDER BY id ASC
+");
+
+$page_title = "Pet Boarding";
+require_once 'includes/header.php';
+?>
+
+
+<style>
+
+/* ================= PAGE ================= */
+
+.boarding-card{
+    background:#fff;
+    border-radius:24px;
+    padding:32px;
+    margin-bottom:30px;
+    box-shadow:0 10px 35px rgba(0,0,0,0.06);
+    border:1px solid #ece8ff;
+}
+
+.boarding-title{
+    font-size:34px;
+    font-weight:800;
+    color:#17123b;
+    margin-bottom:28px;
+}
+
+/* ================= FORM ================= */
+
+.boarding-form label{
+    display:block;
+    margin-bottom:10px;
+    margin-top:20px;
+    font-size:15px;
+    font-weight:700;
+    color:#40385e;
+}
+
+.boarding-form input,
+.boarding-form select{
+    width:100%;
+    height:55px;
+    border-radius:14px;
+    border:1px solid #ddd;
+    padding:0 18px;
+    font-size:15px;
+    background:#fff;
+    transition:0.25s ease;
+}
+
+.boarding-form input:focus,
+.boarding-form select:focus{
+    border-color:#7158a6;
+    outline:none;
+    box-shadow:0 0 0 4px rgba(113,88,166,0.12);
+}
+
+.save-btn{
+    background:linear-gradient(135deg,#7158a6,#5c4691);
+    color:#fff;
+    border:none;
+    height:55px;
+    padding:0 34px;
+    border-radius:16px;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    margin-top:28px;
+    transition:0.25s;
+}
+
+.save-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 24px rgba(113,88,166,0.24);
+}
+
+/* ================= TABLE ================= */
+
+.boarding-table{
+    width:100%;
+    border-collapse:collapse;
+    overflow:hidden;
+    border-radius:22px;
+    background:#fff;
+}
+
+.boarding-table thead{
+    background:#7158a6;
+}
+
+.boarding-table th{
+    color:#fff;
+    padding:20px;
+    text-align:left;
+    font-size:14px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.boarding-table td{
+    padding:22px 20px;
+    border-bottom:1px solid #eee;
+    vertical-align:middle;
+    color:#40385e;
+    font-size:15px;
+}
+
+.boarding-table tr:hover{
+    background: transparent ! important;
+}
+
+/* ================= TYPE BADGE ================= */
+
+.type-badge{
+    display:inline-block;
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:700;
+    color:#fff;
+}
+
+.type-dog{
+    background:#5b7cff;
+}
+
+.type-cat{
+    background:#ff6ba6;
+}
+
+/* ================= ACTION ================= */
+
+.action-btn{
+    text-decoration:none;
+    font-weight:700;
+    margin-right:12px;
+    transition:0.2s;
+}
+
+.edit-btn{
+    background:#7158a6;
+    color:#fff;
+}
+
+.delete-btn{
+    background:#ff4d4d;
+    color: white;
+}
+
+.action-btn:hover{
+    opacity:0.7;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:768px){
+
+    .boarding-table{
+        display:block;
+        overflow-x:auto;
+    }
+
+    .boarding-card{
+        padding:22px;
+    }
+
+    .boarding-title{
+        font-size:28px;
     }
 }
 
-$plans = ['Basic', 'Standard', 'Premium', 'VIP'];
-$pet_types = ['Dog', 'Cat', 'Bird', 'Rabbit', 'Other'];
-$boarding_types = ['Day Care', 'Night Stay', 'Full Boarding'];
-$genders = ['Male', 'Female'];
-$vaccinations = ['Yes', 'No'];
+</style>
+
+
+
+<!-- ================= FORM ================= -->
+
+<div class="boarding-card">
+
+<form method="POST" class="boarding-form">
+
+<h2 class="boarding-title">
+
+<?php
+echo $editData
+? 'Edit Boarding Service'
+: 'Add Boarding Service';
 ?>
 
-<!-- PAGE HEADER -->
-<div class="page-header">
-    <h1>Add Boarding Package</h1>
-    <p>Create a new boarding reservation</p>
+</h2>
+
+
+<label>Service Name</label>
+
+<input
+type="text"
+name="name"
+required
+placeholder="Enter Service Name"
+value="<?php echo $editData['name'] ?? ''; ?>"
+>
+
+
+<label>Price</label>
+
+<input
+type="number"
+name="price"
+required
+placeholder="Enter Price"
+value="<?php echo $editData['price'] ?? ''; ?>"
+>
+
+
+<label>Type</label>
+
+<select name="type" required>
+
+<option value="dog"
+<?php if(($editData['type'] ?? '') == 'dog') echo 'selected'; ?>>
+Dog
+</option>
+
+<option value="cat"
+<?php if(($editData['type'] ?? '') == 'cat') echo 'selected'; ?>>
+Cat
+</option>
+
+</select>
+
+
+<?php if($editData){ ?>
+
+<button
+type="submit"
+name="update_boarding"
+class="save-btn">
+Update Service
+</button>
+
+<?php } else { ?>
+
+<button
+type="submit"
+name="add_boarding"
+class="save-btn">
+Add Service
+</button>
+
+<?php } ?>
+
+</form>
+
 </div>
 
-<!-- ADD BOARDING FORM -->
-<div class="card">
-    <div class="card-header">
-        <h2><i class="fas fa-home"></i> New Boarding Reservation</h2>
-    </div>
-    <div class="card-body">
-        <form method="POST" action="add_boarding.php">
-            <h3 style="color: var(--primary); margin-bottom: 20px; font-size: 16px;">
-                <i class="fas fa-user"></i> Owner Information
-            </h3>
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="fas fa-user"></i> Owner Name *</label>
-                    <input type="text" name="owner_name" placeholder="Full Name" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-phone"></i> Phone Number *</label>
-                    <input type="tel" name="phone" placeholder="(555) 123-4567" required>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="fas fa-envelope"></i> Email *</label>
-                    <input type="email" name="email" placeholder="email@example.com" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-city"></i> City/Area</label>
-                    <input type="text" name="city" placeholder="City name">
-                </div>
-            </div>
-            
-            <h3 style="color: var(--primary); margin: 30px 0 20px; font-size: 16px;">
-                <i class="fas fa-paw"></i> Pet Information
-            </h3>
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="fas fa-paw"></i> Pet Name *</label>
-                    <input type="text" name="pet_name" placeholder="Pet name" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-heart"></i> Pet Type *</label>
-                    <select name="pet_type" required>
-                        <option value="">Select Pet Type</option>
-                        <?php foreach($pet_types as $type): ?>
-                        <option value="<?php echo $type; ?>"><?php echo $type; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="fas fa-star"></i> Plan *</label>
-                    <select name="plan" required>
-                        <option value="">Select Plan</option>
-                        <?php foreach($plans as $plan): ?>
-                        <option value="<?php echo $plan; ?>"><?php echo $plan; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-info-circle"></i> Breed</label>
-                    <input type="text" name="breed" placeholder=" breed">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="fas fa-birthday-cake"></i> Age (years)</label>
-                    <input type="number" name="age" placeholder="Age in years" min="0" max="30">
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-venus-mars"></i> Gender</label>
-                    <select name="gender">
-                        <option value="">Select Gender</option>
-                        <?php foreach($genders as $gender): ?>
-                        <option value="<?php echo $gender; ?>"><?php echo $gender; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-            
-            <h3 style="color: var(--primary); margin: 30px 0 20px; font-size: 16px;">
-                <i class="fas fa-hotel"></i> Boarding Details
-            </h3>
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="fas fa-bed"></i> Boarding Type *</label>
-                    <select name="boarding_type" required>
-                        <option value="">Select Type</option>
-                        <?php foreach($boarding_types as $type): ?>
-                        <option value="<?php echo $type; ?>"><?php echo $type; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-phone-square"></i> Emergency Contact</label>
-                    <input type="tel" name="emergency_contact" placeholder="Emergency contact number">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="fas fa-sign-in-alt"></i> Check-in Date *</label>
-                    <input type="date" name="checkin_date" required>
-                </div>
-                <div class="form-group">
-                    <label><i class="fas fa-sign-out-alt"></i> Check-out Date</label>
-                    <input type="date" name="checkout_date">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label><i class="fas fa-syringe"></i> Vaccinated? *</label>
-                    <select name="vaccinated_confirm" required>
-                        <option value="">Select</option>
-                        <?php foreach($vaccinations as $vax): ?>
-                        <option value="<?php echo $vax; ?>"><?php echo $vax; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label><i class="fas fa-sticky-note"></i> Special Notes</label>
-                <textarea name="notes" placeholder="Any special care instructions, dietary requirements, medical conditions, etc."></textarea>
-            </div>
-            
-            <div style="margin-top: 24px;">
-                <button type="submit" name="add_boarding" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Create Boarding Reservation
-                </button>
-                <button type="reset" class="btn btn-secondary">
-                    <i class="fas fa-redo"></i> Reset Form
-                </button>
-            </div>
-        </form>
-    </div>
+
+
+<!-- ================= TABLE ================= -->
+
+<div class="boarding-card">
+
+<h2 class="boarding-title">
+All Boarding Services
+</h2>
+
+<table class="boarding-table">
+
+<thead>
+
+<tr>
+<th>Name</th>
+<th>Price</th>
+<th>Type</th>
+<th>Action</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<?php while($row = mysqli_fetch_assoc($services)): ?>
+
+<tr>
+
+<td>
+<?php echo $row['name']; ?>
+</td>
+
+<td>
+₹<?php echo $row['price']; ?>
+</td>
+
+<td>
+
+<?php if($row['type'] == 'dog'){ ?>
+
+<span class="type-badge type-dog">
+Dog
+</span>
+
+<?php } else { ?>
+
+<span class="type-badge type-cat">
+Cat
+</span>
+
+<?php } ?>
+
+</td>
+
+<td>
+
+<a
+href="?edit=<?php echo $row['id']; ?>"
+class="action-btn edit-btn">
+Edit
+</a>
+
+<a
+href="?delete=<?php echo $row['id']; ?>"
+class="action-btn delete-btn"
+onclick="return confirm('Delete this service?')">
+Delete
+</a>
+
+</td>
+
+</tr>
+
+<?php endwhile; ?>
+
+</tbody>
+
+</table>
+
 </div>
 
 <?php require_once 'includes/footer.php'; ?>

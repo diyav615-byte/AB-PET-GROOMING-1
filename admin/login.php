@@ -1,5 +1,11 @@
 <?php
+
 session_start();
+
+include '../config/db.php';
+
+$error = '';
+$success = '';
 
 // If already logged in, redirect to dashboard
 if (isset($_SESSION['admin_id'])) {
@@ -23,17 +29,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($username) || empty($password)) {
         $error = 'Please enter both username and password.';
     } else {
-        // For demo purposes, using hardcoded credentials
-        // In production, use proper database with hashed passwords
-        if ($username === 'admin' && $password === 'admin123') {
-            $_SESSION['admin_id'] = 1;
-            $_SESSION['admin_username'] = 'admin';
-            $_SESSION['last_activity'] = time();
-            header("Location: dashboard.php");
-            exit;
-        } else {
-            $error = 'Invalid username or password.';
-        }
+        
+      $query = mysqli_query( $conn,
+    "SELECT * FROM admin_users 
+     WHERE username='$username' 
+     AND password='$password'"
+);
+
+if(mysqli_num_rows($query) > 0){
+
+    $admin = mysqli_fetch_assoc($query);
+
+    $_SESSION['admin_id'] = $admin['id'];
+    $_SESSION['admin_username'] = $admin['username'];
+    $_SESSION['admin_password'] = $admin['password'];
+    $_SESSION['last_activity'] = time();
+
+    header("Location: dashboard.php");
+    exit;
+
+}else{
+    $error = "Invalid username or password.";
+}
     }
 }
 ?>
@@ -160,16 +177,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-left-color: #6BBF59;
         }
 
-        .demo-info {
-            background-color: #D1ECF1;
-            color: #0c5460;
-            border-left: 4px solid #3498DB;
-            padding: 12px 15px;
-            border-radius: 6px;
-            margin-top: 20px;
-            font-size: 13px;
-        }
-
         .demo-info strong {
             display: block;
             margin-bottom: 5px;
@@ -233,11 +240,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <button type="submit" class="login-btn">Login</button>
         </form>
 
-        <div class="demo-info">
-            <strong>Demo Credentials:</strong>
-            Username: <code>admin</code><br>
-            Password: <code>admin123</code>
-        </div>
-    </div>
 </body>
 </html>

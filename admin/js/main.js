@@ -57,16 +57,15 @@ function showAlert(message, type = 'success') {
 }
 
 // ===== TABLE FUNCTIONS =====
-function deleteRow(id, type) {
-    if (confirm('Are you sure you want to delete this item?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = 'delete.php';
-        form.innerHTML = `<input type="hidden" name="delete_id" value="${id}">
-                         <input type="hidden" name="delete_type" value="${type}">`;
-        document.body.appendChild(form);
-        form.submit();
+function deleteRow(id, table) {
+
+    if(confirm("Are you sure you want to delete this record?")) {
+
+        window.location.href =
+            "delete.php?id=" + id + "&table=" + table;
+
     }
+
 }
 
 // ===== SEARCH FUNCTIONS =====
@@ -374,3 +373,108 @@ setTimeout(() => {
         setTimeout(() => alert.remove(), 300);
     });
 }, 5000);
+
+function toggleNotifications() {
+
+    document
+        .getElementById("notificationPopup")
+        .classList.toggle("show");
+
+}
+
+/* swipe remove effect */
+
+document.querySelectorAll(".swipe-card").forEach(card => {
+
+    let startX = 0;
+
+    card.addEventListener("touchstart", e => {
+        startX = e.touches[0].clientX;
+    });
+
+    card.addEventListener("touchend", e => {
+
+        let endX = e.changedTouches[0].clientX;
+
+        if(startX - endX > 100){
+
+            card.classList.add("removing");
+
+            setTimeout(() => {
+                card.remove();
+            }, 400);
+
+        }
+
+    });
+
+});
+
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* SEARCH INPUT */
+    const searchInput =
+    document.getElementById("globalSearch");
+
+    /* STOP IF INPUT NOT FOUND */
+    if (!searchInput) return;
+
+    /* SEARCH FUNCTION */
+    searchInput.addEventListener("keyup", function () {
+
+        const searchValue =
+        this.value.toLowerCase().trim();
+
+        /* ALL TABLE ROWS */
+        const tableRows =
+        document.querySelectorAll("table tbody tr");
+
+        tableRows.forEach(function (row) {
+
+            const rowText =
+            row.innerText.toLowerCase();
+
+            if (rowText.includes(searchValue)) {
+
+                row.style.display = "";
+
+            } else {
+
+                row.style.display = "none";
+
+            }
+
+        });
+
+
+
+        /* OPTIONAL CARD SEARCH */
+        const cards =
+        document.querySelectorAll(
+            ".card, .booking-card, .review-card, .boarding-card"
+        );
+
+        cards.forEach(function(card){
+
+            const cardText =
+            card.innerText.toLowerCase();
+
+            if(cardText.includes(searchValue)){
+
+                card.style.display = "";
+
+            } else {
+
+                card.style.display = "none";
+
+            }
+
+        });
+
+    });
+
+});
+

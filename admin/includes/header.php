@@ -4,11 +4,13 @@ require_once 'auth_check.php';
 
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title><?php echo isset($page_title) ? htmlspecialchars($page_title) : 'Dashboard'; ?> - AB Pet Grooming Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
@@ -20,7 +22,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
         <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-logo">
-                    <div class="sidebar-logo-icon">🐾</div>
+                    <div class="logo-box"><img src="../assets/images/logo.png" alt="Logo"></div>
                     <span class="sidebar-logo-text">AB Pet Grooming</span>
                 </div>
             </div>
@@ -68,18 +70,13 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                         <span>Contact Messages</span>
                     </a>
                 </li>
-                <li>
-                    <a href="activity_logs.php" class="<?php echo $current_page == 'activity_logs' ? 'active' : ''; ?>">
-                        <i class="fas fa-history"></i>
-                        <span>Activity Logs</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="payment_details.php" class="<?php echo $current_page == 'payment_details' ? 'active' : ''; ?>">
-                        <i class="fas fa-credit-card"></i>
-                        <span>Payment Details</span>
-                    </a>
-                </li>
+
+                <li> <a href="settings.php">
+                 <i class="fas fa-cog"></i>
+                 <span>Settings</span> </a>
+                 </li>
+
+                
             </ul>
 
             <div class="sidebar-footer">
@@ -87,7 +84,6 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     <div class="user-avatar">A</div>
                     <div class="user-details">
                         <h4>Admin</h4>
-                        <p><?php echo htmlspecialchars($_SESSION['admin_username'] ?? 'Administrator'); ?></p>
                     </div>
                 </div>
                 <form method="POST" action="logout.php" style="margin: 0;">
@@ -107,15 +103,21 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     <div class="navbar-title"><?php echo isset($page_title) ? htmlspecialchars($page_title) : 'Dashboard'; ?></div>
                 </div>
                 <div class="navbar-right">
-                    <button class="nav-icon-btn" title="Search">
-                        <i class="fas fa-search"></i>
-                    </button>
-                    <button class="nav-icon-btn" title="Notifications">
-                        <i class="fas fa-bell"></i>
-                        <span class="badge">3</span>
-                    </button>
-                    <button class="nav-icon-btn" title="Settings">
-                        <i class="fas fa-cog"></i>
-                    </button>
-                </div>
+
+    <div class="global-search-wrapper">
+
+        <i class="fas fa-search global-search-icon"></i>
+
+        <input
+            type="text"
+            id="globalSearch"
+            class="global-search"
+            placeholder="Search anything..."
+        >
+
+</div>
+
+</div>
+                    
+                   
             </div>

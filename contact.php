@@ -1,250 +1,333 @@
-
-
-<?php include "includes/header.php"; ?>
-
+<?php include 'includes/header.php'; ?>
 <link rel="stylesheet" href="assets/css/contact.css">
 
 <section class="contact-page">
-  <div class="container">
 
-    <h1 class="contact-title">Contact Us</h1>
+<div class="container">
 
-    <p class="contact-sub">
-      Have questions? We'd love to hear from you. Get in touch with AB Pet Grooming today.
-    </p>
+<h1 class="contact-title">Contact Us</h1>
 
-    <?php if (isset($_GET['message']) && $_GET['message'] == 'success'): ?>
-      <div class="review-msg success">Your message has been sent successfully.</div>
-    <?php endif; ?>
+<!-- ===== CARDS ===== -->
+<div class="contact-grid">
 
-    <!-- CONTACT INFO -->
-    <div class="contact-cards">
-
-      <div class="contact-card">
-        
-        <h3>Call Us</h3>
-        <p class="highlight">+91 8828719786</p>
-        <span>Mon - Sun, 10:30 AM - 7:00 PM</span>
-      </div>
-
-      <div class="contact-card">
-       
-        <h3>Email Us</h3>
-        <p class="highlight">abrarshaikhsk10@gmail.com</p>
-        <span>We will respond within 24 hours</span>
-      </div>
-
-      <div class="contact-card">
-        
-        <h3>Visit Us</h3>
-        <p class="highlight">Kelkar Wadi Road,Chembur East, Mumbai
-        </p>
-        <span>Mumbai, India</span>
-      </div>
-
-    </div>
-
-    <!-- FORM + MAP -->
-    <div class="contact-grid">
-
-      <!-- CONTACT FORM -->
-      <div class="contact-form">
-        <h2>Send us a Message</h2>
-
-        <form action="" method="POST">
-          <label>Name *</label>
-          <input type="text" name="name" placeholder="Your name" required>
-
-          <label>Email *</label>
-          <input type="email" name="email" placeholder="your@email.com" required>
-
-          <label>Phone</label>
-          <input type="text" name="phone" placeholder="+91">
-
-          <label>Subject *</label>
-          <input type="text" name="subject" placeholder="How can we help?" required>
-
-          <label>Message *</label>
-          <textarea name="message" rows="5" placeholder="Tell us more about your inquiry..." required></textarea>
-
-          <button type="submit" name="send_message" class="contact-btn">Send Message</button>
-        </form>
-      </div>
-
-      <!-- LOCATION + MAP -->
-      <div class="contact-location">
-
-        <h2>Our Location</h2>
-
-        <div class="address-box">
-          <p>
-            Shop No 1, Amar Chawl,<br>
-            Kelkar Wadi Road,<br>
-            Ghatla Village, Chembur East,<br>
-            Mumbai – 400071
-          </p>
-        </div>
-
-        <div class="map-box">
-          <iframe
-            src="https://www.google.com/maps?q=Shop+No+1+Amar+Chawl+Kelkar+Wadi+Road+Ghatla+Village+Chembur+East+Mumbai+400071&output=embed"
-            width="100%"
-            height="300"
-            style="border:0;border-radius:14px;"
-            loading="lazy"
-            allowfullscreen="">
-          </iframe>
-        </div>
-
-        <div class="quick-chat">
-          <h3>Quick Chat</h3>
-
-          <a href="https://wa.me/918828719786" class="whatsapp-btn" target="_blank">
-            Chat on WhatsApp
-          </a>
-
-          <p>Get instant responses to your questions</p>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- REVIEW FORM -->
-    <section class="reviews-submit-section">
-      <div class="container">
-        <div class="review-form-card">
-          <h2>Share Your Experience</h2>
-          <p>We would love to hear about your pet’s grooming or boarding experience.</p>
-
-          <?php if (isset($_GET['review']) && $_GET['review'] == 'success'): ?>
-            <div class="review-msg success">Thank you! Your review has been submitted for approval.</div>
-          <?php endif; ?>
-
-          <?php if (isset($_GET['review']) && $_GET['review'] == 'error'): ?>
-            <div class="review-msg error">Something went wrong. Please try again.</div>
-          <?php endif; ?>
-
-          <form action="" method="POST" class="review-form">
-
-            <div class="review-row">
-              <div class="review-group">
-                <label>Your Name *</label>
-                <input type="text" name="customer_name" placeholder="Enter your name" required>
-              </div>
-
-           
-
-              <div class="review-group">
-                <label>Rating *</label>
-                <select name="rating" required>
-                  <option value="">Select rating</option>
-                  <option value="5">5 Star</option>
-                  <option value="4">4 Star</option>
-                  <option value="3">3 Star</option>
-                  <option value="2">2 Star</option>
-                  <option value="1">1 Star</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="review-group">
-              <label>Your Review *</label>
-              <textarea name="review_text" rows="5" placeholder="Write your experience here..." required></textarea>
-            </div>
-
-            <button type="submit" name="submit_review" class="review-submit-btn">Submit Review</button>
-          </form>
-        </div>
-      </div>
-    </section>
-
-    <!-- FAQ -->
-    <div class="faq-section">
-      <h2>Frequently Asked Questions</h2>
-
-      <div class="faq-grid">
-        <div class="faq-item">
-          <h4>How do I book grooming?</h4>
-          <p>You can book grooming through our website, phone call, or WhatsApp.</p>
-        </div>
-
-        <div class="faq-item">
-          <h4>Do you offer pet boarding?</h4>
-          <p>Yes, we offer safe and hygienic boarding for dogs and cats.</p>
-        </div>
-
-        <div class="faq-item">
-          <h4>Do you use safe grooming products?</h4>
-          <p>Yes, we use high-quality pet-safe grooming products.</p>
-        </div>
-
-        <div class="faq-item">
-          <h4>Where is your salon located?</h4>
-          <p>We are located in Chembur East, Mumbai near Kelkar Wadi Road.</p>
-        </div>
-      </div>
-    </div>
-
+  <div class="contact-card">
+    <h3>Call Us</h3>
+    <p class="highlight">+91 8828719786</p>
+    <span>Mon – Sun, 10:30 AM – 7 PM</span>
   </div>
+
+  <div class="contact-card">
+    <h3>Email Us</h3>
+    <p class="highlight">abpetgroomingstudio@gmail.com</p>
+    <span>We respond within 24 hours</span>
+  </div>
+
+  <div class="contact-card">
+    <h3>Visit Us</h3>
+    <p class="highlight">
+      Kelkar Wadi Road,<br>
+      Chembur East, Mumbai
+    </p>
+  </div>
+
+</div>
+
+<!-- ===== FORMS ===== -->
+<div class="contact-main">
+
+  <!-- LEFT = REVIEW -->
+  <div class="review-box">
+    <h2>Write a Review</h2>
+
+   <form action="submit_review.php" method="POST" onsubmit="return validateReview()">
+      <input type="text" name="name" placeholder="Your Name" required>
+
+      <select name="rating" required>
+        <option value="">Select Rating</option>
+        <option value="5">⭐⭐⭐⭐⭐</option>
+        <option value="4">⭐⭐⭐⭐</option>
+        <option value="3">⭐⭐⭐</option>
+        <option value="2">⭐⭐</option>
+        <option value="1">⭐</option>
+      </select>
+
+      <textarea name="message" placeholder="Write your review" required></textarea>
+
+      <button type="submit">Submit Review</button>
+
+    </form>
+  </div>
+
+  <!-- RIGHT = CONTACT -->
+  <div class="form-box">
+    <h2>Send Us Message</h2>
+
+   <form action="submit_contact.php" method="POST" onsubmit="return validateContact()">
+
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="email" name="email" placeholder="Your Email" required>
+      <input type="text" name="phone" placeholder="Phone Number" required>
+      <input type="text" name="subject" placeholder="Subject" required>
+
+      <textarea name="message" placeholder="Your Message" required></textarea>
+
+      <button type="submit">Send Message</button>
+
+    </form>
+  </div>
+
+</div>
+
+<!-- ===== LOCATION ===== -->
+<div class="location-box">
+  <h2>Your Location</h2>
+
+  <p>
+    Shop No 1, Amar Chawl,<br>
+    Kelkar Wadi Road,<br>
+    Chembur East, Mumbai
+  </p>
+
+  <div class="map">
+    <iframe src="https://maps.google.com/maps?q=Chembur&t=&z=13&output=embed"></iframe>
+  </div>
+</div>
+
+</div>
 </section>
 
-<form action="submit_contact.php" method="POST" onsubmit="return validateContact()">
+<style>
+/* ===== PAGE BACKGROUND ===== */
+.contact-page{
+  background: linear-gradient(135deg, #f6f2ff, #ffffff);
+  padding: 50px 0;
+}
 
-<input type="text" id="name" name="name" placeholder="Name" required><br><br>
+/* ===== TITLE ===== */
+.contact-title{
+  text-align:center;
+  font-size:48px;
+  font-weight:900;
+  color:#2b154d;
+  margin-bottom:40px;
+}
 
-<input type="email" id="email" name="email" placeholder="Email" required><br><br>
+/* ===== CARDS ===== */
+.contact-grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:25px;
+  max-width:1100px;
+  margin:0 auto 50px;
+}
 
-<input type="text" id="phone" name="phone" placeholder="Phone" required><br><br>
+.contact-card{
+  background:#fff;
+  border-radius:20px;
+  padding:30px 20px;
+  text-align:center;
+  box-shadow:0 12px 35px rgba(0,0,0,0.08);
+}
 
-<input type="text" id="subject" name="subject" placeholder="Subject" required><br><br>
+.contact-card h3{
+  color:#2b154d;
+  margin-bottom:10px;
+}
 
-<textarea id="message" name="message" placeholder="Message" required></textarea><br><br>
+.contact-card .highlight{
+  color:#7158a6;
+  font-weight:700;
+  word-break: break-word;
+}
 
-<button type="submit">Send</button>
+.contact-card span{
+  display:block;
+  margin-top:6px;
+  color:#777;
+  font-size:14px;
+}
 
-</form>
+/* ===== FORM SECTION ===== */
+.contact-main{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:30px;
+  max-width:1100px;
+  margin:0 auto;
+}
+
+/* ===== REVIEW BOX (LEFT) ===== */
+.review-box{
+  background: linear-gradient(135deg,#7158a6,#5b4588);
+  padding:30px;
+  border-radius:25px;
+  color:#fff;
+}
+
+.review-box h2{
+  margin-bottom:20px;
+}
+
+.review-box input,
+.review-box textarea,
+.review-box select{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  margin-bottom:12px;
+}
+
+.review-box button{
+  background:#fff;
+  color:#7158a6;
+  border:none;
+  padding:12px 20px;
+  border-radius:25px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+/* ===== CONTACT FORM (RIGHT) ===== */
+.form-box{
+  background: linear-gradient(135deg,#7158a6,#5b4588);
+  padding:30px;
+  border-radius:25px;
+  color:#fff;
+}
+
+.form-box h2{
+  margin-bottom:20px;
+}
+
+.form-box input,
+.form-box textarea{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  margin-bottom:12px;
+}
+
+.form-box button{
+  background:#fff;
+  color:#7158a6;
+  border:none;
+  padding:12px 20px;
+  border-radius:25px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+/* ===== LOCATION ===== */
+.location-box{
+  margin-top:60px;
+  background:#fff;
+  padding:40px;
+  border-radius:25px;
+  max-width:1100px;
+  margin-left:auto;
+  margin-right:auto;
+  box-shadow:0 12px 35px rgba(0,0,0,0.08);
+}
+
+.location-box h2{
+  margin-bottom:10px;
+}
+
+.location-box p{
+  color:#7158a6;
+  font-weight:600;
+  margin-bottom:20px;
+}
+
+/* ===== MAP ===== */
+.map iframe{
+  width:100%;
+  height:300px;
+  border:none;
+  border-radius:15px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:900px){
+
+  .contact-grid{
+    grid-template-columns:1fr;
+  }
+
+  .contact-main{
+    grid-template-columns:1fr;
+  }
+}
+    </style>
 
 <script>
-function validateContact() {
 
-let name = document.getElementById("name").value.trim();
-let email = document.getElementById("email").value.trim();
-let phone = document.getElementById("phone").value.trim();
-let subject = document.getElementById("subject").value.trim();
-let message = document.getElementById("message").value.trim();
+// ===== CONTACT FORM VALIDATION =====
+<script>
+function validateContact(form) {
 
-let nameRegex = /^[A-Za-z ]+$/;
-let phoneRegex = /^[0-9]{10}$/;
-let emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  let name = form.querySelector('input[name="name"]').value.trim();
+  let email = form.querySelector('input[name="email"]').value.trim();
+  let phone = form.querySelector('input[name="phone"]').value.trim();
+  let subject = form.querySelector('input[name="subject"]').value.trim();
+  let message = form.querySelector('textarea').value.trim();
 
-if (!nameRegex.test(name) || name.length > 20) {
-alert("Name only letters max 20");
-return false;
-}
+  if(!/^[A-Za-z\s]+$/.test(name)){
+    alert("Name should contain only letters");
+    return false;
+  }
 
-if (!emailRegex.test(email)) {
-alert("Invalid email");
-return false;
-}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    alert("Enter valid email");
+    return false;
+  }
 
-if (!phoneRegex.test(phone)) {
-alert("Phone must be 10 digits");
-return false;
-}
+  if(!/^[0-9]{10}$/.test(phone)){
+    alert("Enter valid phone number");
+    return false;
+  }
 
-if (subject.length > 40) {
-alert("Subject max 40 characters");
-return false;
-}
+  if(subject.split(" ").length > 20){
+    alert("Subject max 20 words");
+    return false;
+  }
 
-let words = message.split(/\s+/);
-if (words.length > 40) {
-alert("Message max 40 words");
-return false;
-}
+  if(message.split(" ").length > 40){
+    alert("Message max 40 words");
+    return false;
+  }
 
-return true;
+  return true;
 }
 </script>
 
-<?php include "includes/footer.php"; ?>
+<script>
+function validateReview(){
+
+  let name = document.querySelector('.review-box input[name="name"]').value.trim();
+  let review = document.querySelector('.review-box textarea').value.trim();
+
+  if(!/^[A-Za-z\s]+$/.test(name)){
+    alert("Name should contain only letters");
+    return false;
+  }
+
+  if(name.length > 20){
+    alert("Name max 20 characters");
+    return false;
+  }
+
+  let words = review.split(" ").filter(w => w !== "");
+  if(words.length > 40){
+    alert("Max 40 words allowed");
+    return false;
+  }
+
+  return true;
+}
+
+</script>
+
+<?php include 'includes/footer.php'; ?>

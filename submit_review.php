@@ -1,22 +1,21 @@
 <?php
 include "config/db.php";
 
-$name = trim($_POST['name']);
-$rating = $_POST['rating'];
-$review = trim($_POST['review']);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-if (!preg_match("/^[A-Za-z ]+$/", $name) || strlen($name) > 20) {
-die("Invalid Name");
+    $name = $_POST['name'];
+    $rating = $_POST['rating'];
+    $message = $_POST['message'];
+
+    $stmt = $conn->prepare("INSERT INTO reviews (name, rating, message, status) VALUES (?, ?, ?, 'pending')");
+    $stmt->bind_param("sis", $name, $rating, $message);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Review submitted! Waiting for approval'); window.location.href='contact.php';</script>";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
+    $stmt->close();
 }
-
-if (strlen($review) > 40) {
-die("Review too long");
-}
-
-$sql = "INSERT INTO reviews (name,rating,review)
-VALUES ('$name','$rating','$review')";
-
-mysqli_query($conn,$sql);
-
-echo "Review Submitted";
 ?>

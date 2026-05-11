@@ -1,46 +1,25 @@
 <?php
-include "config/db.php";
+include "config/db.php";  // ✅ correct path
 
-// IMPORTANT: direct access block
-if ($_SERVER["REQUEST_METHOD"] != "POST") {
-    die("Access Denied");
-}
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-// GET DATA SAFELY
-$name = isset($_POST['name']) ? trim($_POST['name']) : '';
-$email = isset($_POST['email']) ? trim($_POST['email']) : '';
-$phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
-$subject = isset($_POST['subject']) ? trim($_POST['subject']) : '';
-$message = isset($_POST['message']) ? trim($_POST['message']) : '';
+    $name = trim($_POST['name']);
+    $email = trim($_POST['email']);
+    $phone = trim($_POST['phone']);
+    $subject = trim($_POST['subject']);
+    $message = trim($_POST['message']);
 
-// VALIDATION
-if (!preg_match("/^[A-Za-z ]+$/", $name) || strlen($name) > 20) {
-    die("Invalid Name");
-}
+    // Prepare statement
+    $stmt = $conn->prepare("INSERT INTO contact_messages (name, email, phone, subject, message) VALUES (?, ?, ?, ?, ?)");
 
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    die("Invalid Email");
-}
+    $stmt->bind_param("sssss", $name, $email, $phone, $subject, $message);
 
-if (!preg_match("/^[0-9]{10}$/", $phone)) {
-    die("Invalid Phone");
-}
+    if ($stmt->execute()) {
+        echo "<script>alert('Message Sent Successfully'); window.location.href='contact.php';</script>";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
 
-if (strlen($subject) > 40) {
-    die("Subject too long");
-}
-
-if (str_word_count($message) > 40) {
-    die("Message too long");
-}
-
-// INSERT
-$sql = "INSERT INTO contact (name,email,phone,subject,message)
-VALUES ('$name','$email','$phone','$subject','$message')";
-
-if (mysqli_query($conn, $sql)) {
-    echo "Message Sent Successfully";
-} else {
-    echo "Error: " . mysqli_error($conn);
+    $stmt->close();
 }
 ?>

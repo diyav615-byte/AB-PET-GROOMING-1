@@ -50,3 +50,4 @@ tabs.forEach(tab => {
   });
   <script src="assets/js/boarding-form.js"></script>
 });
+

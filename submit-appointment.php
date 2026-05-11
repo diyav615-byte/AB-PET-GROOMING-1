@@ -19,6 +19,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $appointment_date = $_POST['appointment_date'];
     $appointment_time = $_POST['appointment_time'];
     $notes = mysqli_real_escape_string($conn, $_POST['notes']);
+    $payment_method = $_POST['payment_method'] ?? 'cash';
+    $payment_status = ($payment_method == 'online')? 'paid': 'pending';
 
     // LIMIT: 10 bookings per day
     $check = mysqli_query($conn, "SELECT COUNT(*) as total FROM appointments WHERE appointment_date='$appointment_date'");
@@ -30,9 +32,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     $sql = "INSERT INTO appointments 
-    (owner_name, email, phone, pet_name, pet_category, breed, pet_size, pet_count, multi_pet_note, main_service, addons, appointment_date, appointment_time, notes)
+    (owner_name, email, phone, pet_name, pet_category, breed, pet_size, pet_count, multi_pet_note, main_service, addons, appointment_date, appointment_time, notes, payment_method, payment_status)
     VALUES 
-    ('$owner_name','$email','$phone','$pet_name','$pet_category','$breed','$pet_size','$pet_count','$multi_pet_note','$main_service','$addons','$appointment_date','$appointment_time','$notes')";
+    ('$owner_name','$email','$phone','$pet_name','$pet_category','$breed','$pet_size','$pet_count','$multi_pet_note','$main_service','$addons','$appointment_date','$appointment_time','$notes','$payment_method','$payment_status')";
 
     if (mysqli_query($conn, $sql)) {
         header("Location: book-appointment.php?success=1");

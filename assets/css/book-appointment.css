@@ -302,3 +302,172 @@
     padding: 12px 18px;
   }
 }
+
+
+/* =========================
+   PAYMENT SECTION
+========================= */
+
+.payment-method-section{
+    margin-top:25px;
+}
+
+.payment-title{
+    display:block;
+    margin-bottom:14px;
+    font-size:17px;
+    font-weight:700;
+    color:#1f1f1f;
+}
+
+.payment-options{
+    display:flex;
+    gap:18px;
+}
+
+.payment-card{
+    flex:1;
+    position:relative;
+    cursor:pointer;
+}
+
+.payment-card input{
+    display:none;
+}
+
+.payment-content{
+    height:95px;
+    border-radius:22px;
+    border:2px solid #ececec;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:0.25s ease;
+}
+
+.payment-content h4{
+    font-size:20px;
+    font-weight:700;
+    color:#1f1f1f;
+}
+
+.payment-card input:checked + .payment-content{
+    border-color:#7c5cff;
+    background:#f7f4ff;
+    box-shadow:
+    0 10px 25px rgba(124,92,255,0.18);
+}
+
+
+
+/* =========================
+   QR POPUP
+========================= */
+
+.qr-popup-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(10,10,25,0.72);
+    backdrop-filter:blur(8px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:99999;
+
+    opacity:0;
+    visibility:hidden;
+
+    transition:0.28s ease;
+}
+
+.qr-popup-overlay.active{
+    opacity:1;
+    visibility:visible;
+}
+
+.qr-popup-box{
+    position:relative;
+    width:340px;
+
+    border-radius:28px;
+    overflow:hidden;
+
+    animation:popupAnim 0.28s ease;
+}
+
+.qr-popup-image{
+    width:100%;
+    display:block;
+    border-radius:28px;
+}
+
+
+
+/* CLOSE BUTTON */
+
+.close-qr-btn{
+    position:absolute;
+    top:10px;
+    right:10px;
+
+    width:34px;
+    height:34px;
+
+    border:none;
+    border-radius:50%;
+
+    background:#fff;
+    color:#111;
+
+    font-size:20px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    z-index:10;
+
+    box-shadow:
+    0 6px 18px rgba(0,0,0,0.15);
+
+    transition:0.2s ease;
+}
+
+.close-qr-btn:hover{
+    transform:scale(1.08);
+}
+
+
+
+/* ANIMATION */
+
+@keyframes popupAnim{
+
+    from{
+        transform:scale(0.88);
+        opacity:0;
+    }
+
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+
+}
+
+
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+    .payment-options{
+        flex-direction:column;
+    }
+
+    .qr-popup-box{
+        width:88%;
+        max-width:320px;
+    }
+
+}

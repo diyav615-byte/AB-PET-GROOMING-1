@@ -13,7 +13,6 @@
         Every pet deserves gentle care, hygiene, and a calm environment.
       </p>
     </div>
-
     <div class="story-block">
       <h2>Our Goal</h2>
       <p>
@@ -160,6 +159,46 @@
 
 </section>
 
+<section class="review-section">
+
+  <h2 class="review-title">What Our Happy Users Say 💜</h2>
+
+  <div class="carousel">
+    <div class="carousel-track">
+
+      <?php
+      include "config/db.php";
+
+      $result = $conn->query("
+        SELECT * FROM reviews
+        WHERE status='approved'
+        ORDER BY id DESC
+      ");
+
+      while($row = $result->fetch_assoc()){
+      ?>
+
+      <div class="review-card">
+        <div class="stars">
+          <?= str_repeat("⭐", $row['rating']) ?>
+        </div>
+
+        <p class="review-text">
+          “<?= $row['message'] ?>”
+        </p>
+
+        <h4 class="review-name">
+          — <?= $row['name'] ?>
+        </h4>
+      </div>
+
+      <?php } ?>
+
+    </div>
+  </div>
+
+</section>
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const track = document.getElementById("reelsTrack");
@@ -267,25 +306,4 @@ document.addEventListener("DOMContentLoaded", function () {
   updateSlider();
 });
 </script>
-<?php
-include "config/db.php";
-
-$res=mysqli_query($conn,"
-SELECT * FROM reviews 
-WHERE status='approved' 
-ORDER BY id DESC 
-LIMIT 10
-");
-?>
-
-<div class="review-section">
-<?php while($row=mysqli_fetch_assoc($res)): ?>
-<div class="review-card">
-<h4><?= $row['name'] ?></h4>
-<div><?= str_repeat("⭐",$row['rating']); ?></div>
-<p><?= $row['review'] ?></p>
-</div>
-<?php endwhile; ?>
-</div>
-
 <?php include "includes/footer.php"; ?>

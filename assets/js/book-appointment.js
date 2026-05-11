@@ -105,8 +105,8 @@ if (dateInput) {
 // ===== TIME VALIDATION =====
 const timeInput = document.querySelector("[name='appointment_time']");
 if (timeInput) {
-  timeInput.addEventListener("input", function () {
-    if (this.value < "10:30" || this.value > "19:00") {
+  timeInput.addEventListener("change", function () {
+    if (this.value < "10:00" || this.value > "19:00") {
       alert("Select time between 10:30 AM to 7:00 PM");
       this.value = "";
     }
@@ -163,3 +163,55 @@ document.querySelector("form").addEventListener("submit", function (e) {
   }
 
 });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const onlinePayment =
+    document.getElementById("onlinePayment");
+
+    const qrPopup =
+    document.getElementById("qrPopup");
+
+    const closeQrBtn =
+    document.getElementById("closeQrBtn");
+
+    if(onlinePayment){
+
+        onlinePayment.addEventListener("click", function () {
+
+            qrPopup.classList.add("active");
+
+        });
+
+    }
+
+    if(closeQrBtn){
+
+        closeQrBtn.addEventListener("click", function () {
+
+            qrPopup.classList.remove("active");
+
+        });
+
+    }
+
+    if(qrPopup){
+
+        qrPopup.addEventListener("click", function (e) {
+
+            if(e.target === qrPopup){
+
+                qrPopup.classList.remove("active");
+
+            }
+
+        });
+
+    }
+
+});
+
+
+
+

@@ -20,14 +20,15 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
   $emergency = $_POST['emergency_contact'];
   $checkin = $_POST['checkin_date'];
   $checkout = $_POST['checkout_date'];
-
+  
   $vaccinated = isset($_POST['vaccinated_confirm']) ? "Yes" : "No";
-
+  $payment_method = $_POST['payment_method'] ?? 'cash';
+  $payment_status =($payment_method == 'online')? 'paid': 'pending';
   // INSERT QUERY
   $sql = "INSERT INTO boarding 
-  (owner_name, phone, email, city, pet_name, pet_type, plan, breed, age, gender, notes, boarding_type, emergency_contact, checkin_date, checkout_date, vaccinated_confirm)
+  (owner_name, phone, email, city, pet_name, pet_type, plan, breed, age, gender, notes, boarding_type, emergency_contact, checkin_date, checkout_date, vaccinated_confirm, payment_method, payment_status)
   VALUES
-  ('$owner','$phone','$email','$city','$pet','$type','$plan','$breed','$age','$gender','$notes','$boarding_type','$emergency','$checkin','$checkout','$vaccinated')";
+  ('$owner','$phone','$email','$city','$pet','$type','$plan','$breed','$age','$gender','$notes','$boarding_type','$emergency','$checkin','$checkout','$vaccinated','$payment_method','$payment_status')";
 
   mysqli_query($conn, $sql);
 

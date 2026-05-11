@@ -86,7 +86,7 @@ body{
 
 .petInfo h3{
   margin:10px 0;
-  color:#2a1443;
+  color:#7158a6;
 }
 
 /* ===== CONTACT SECTION ===== */
@@ -152,28 +152,28 @@ body{
     <div class="petCard">
       <img src="assets/images/pets/pet2.jpg">
       <div class="petInfo">
-        <h3>Golden Retriever</h3>
+        <h3>Puppies</h3>
       </div>
     </div>
 
     <div class="petCard">
       <img src="assets/images/pets/pet1.jpg">
       <div class="petInfo">
-        <h3>Persian Cat</h3>
+        <h3>Kittens</h3>
       </div>
     </div>
 
     <div class="petCard">
       <img src="assets/images/pets/pet6.jpg">
       <div class="petInfo">
-        <h3>Parrot</h3>
+        <h3>Birds</h3>
       </div>
     </div>
 
     <div class="petCard">
       <img src="assets/images/pets/pet7.jpg">
       <div class="petInfo">
-        <h3>Gold Fish</h3>
+        <h3>Fish</h3>
       </div>
     </div>
 

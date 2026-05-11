@@ -405,81 +405,94 @@
   font-weight: 700;
   text-decoration: none;
   font-size: 15px;
-  box-shadow: 0 10px 25px rgba(113,88,166,0.3);
+  box-shadow: 0 10px 25px rgba(59, 34, 113, 0.3);
   transition: 0.3s ease;
 }
 
 .instaBtn:hover {
   transform: translateY(-2px);
-  background: linear-gradient(135deg, #5b4588, #7158a6);
+  background: linear-gradient(135deg, #1f0650, #a393c7);
 }
 
 .aboutPage {
   overflow-x: hidden;
 }
 
-.about-reviews-section{
-  padding: 70px 0;
-  background: linear-gradient(180deg, #f8f0ff, #fff2f8);
+/* ===== REVIEW SECTION ===== */
+.review-section{
+  padding:70px 20px;
+  background: linear-gradient(135deg,#8a73ad,#7158a6);
+  color:#fff;
+  overflow:hidden;
 }
 
-.about-reviews-section h2{
-  text-align: center;
-  margin: 0 0 10px;
-  font-size: 42px;
-  color: #2a1443;
+/* TITLE CENTER */
+.review-title{
+  text-align:center;
+  font-size:36px;
+  font-weight:900;
+  margin-bottom:40px;
 }
 
-.about-review-sub{
-  text-align: center;
-  max-width: 650px;
-  margin: 0 auto 34px;
-  color: #6e657f;
+/* CAROUSEL */
+.carousel{
+  width:100%;
+  overflow:hidden;
 }
 
-.about-reviews-grid{
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
+/* ⭐ MOST IMPORTANT PART */
+.carousel-track{
+  display:flex;
+  flex-wrap:nowrap; /* prevents vertical stacking */
+  gap:20px;
+  width:max-content;
+  animation: scroll 20s linear infinite;
 }
 
-.about-review-card{
-  background: #fff;
-  border: 2px solid #dcc8f7;
-  border-radius: 22px;
-  padding: 24px;
-  box-shadow: 0 12px 26px rgba(76, 46, 118, 0.08);
+/* CARD */
+.review-card{
+  min-width:300px;
+  max-width:300px;
+  background:#fff;
+  color:#333;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+  flex-shrink:0; /* prevents shrinking */
 }
 
-.review-stars{
-  color: #b76ef4;
-  font-size: 22px;
-  margin-bottom: 14px;
-}
-
+/* TEXT */
 .review-text{
-  color: #524b63;
-  line-height: 1.8;
-  margin-bottom: 18px;
+  margin:10px 0;
+  font-size:14px;
 }
 
-.review-meta h4{
-  margin: 0 0 4px;
-  color: #2f1d4b;
-  font-size: 17px;
+.review-name{
+  font-weight:700;
 }
 
-.review-meta span{
-  color: #7a718b;
-  font-size: 14px;
+/* STARS */
+.stars{
+  font-size:18px;
 }
 
-.no-reviews{
-  text-align: center;
-  grid-column: 1 / -1;
-  color: #6f6780;
-  font-size: 16px;
+/* SCROLL ANIMATION */
+@keyframes scroll{
+  0%{
+    transform: translateX(0);
+  }
+  100%{
+    transform: translateX(-50%);
+  }
 }
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+  .about-review-card {
+    min-width: 220px;
+  }
+}
+
 
 body{
   background:#f6f4ff;
@@ -588,7 +601,7 @@ html, body {
 .stackTrack,
 .reelsTrack {
   display: flex;
-  width: max-content;   /* ⭐ THIS FIXES OVERFLOW */
+  width: max-content;   /*  THIS FIXES OVERFLOW */
 }
 
 /* 5. SLIDES */

@@ -1,10 +1,7 @@
 <?php
-$page_title = "Contact Messages";
-require_once 'includes/header.php';
-
+ob_start();
 include '../config/db.php';
 
-// Handle delete message
 if (isset($_GET['delete'])) {
     $id = (int)$_GET['delete'];
     mysqli_query($conn, "DELETE FROM contact_messages WHERE id = $id");
@@ -13,7 +10,10 @@ if (isset($_GET['delete'])) {
     exit;
 }
 
-$messages = mysqli_query($conn, "SELECT * FROM contact_messages ORDER BY id DESC");
+$page_title = "Contact Messages";
+require_once 'includes/header.php';
+
+$messages = mysqli_query($conn, "SELECT * FROM contact_messages ORDER BY id ASC");
 ?>
 
 <!-- PAGE HEADER -->
@@ -41,8 +41,8 @@ $messages = mysqli_query($conn, "SELECT * FROM contact_messages ORDER BY id DESC
                         <th>Phone</th>
                         <th>Subject</th>
                         <th>Message</th>
-                        <th>Date</th>
-                        <th>Actions</th>
+                        <th>Date & Time</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -82,9 +82,6 @@ $messages = mysqli_query($conn, "SELECT * FROM contact_messages ORDER BY id DESC
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <a href="mailto:<?php echo htmlspecialchars($msg['email']); ?>?subject=Re: <?php echo urlencode($msg['subject']); ?>" class="btn btn-primary btn-sm" title="Reply">
-                                        <i class="fas fa-reply"></i>
-                                    </a>
                                     <a href="contact_messages.php?delete=<?php echo $msg['id']; ?>" class="btn btn-danger btn-sm" title="Delete" onclick="return confirm('Are you sure you want to delete this message?')">
                                         <i class="fas fa-trash"></i>
                                     </a>
@@ -112,3 +109,4 @@ $messages = mysqli_query($conn, "SELECT * FROM contact_messages ORDER BY id DESC
 </div>
 
 <?php require_once 'includes/footer.php'; ?>
+<?php ob_end_flush(); ?>

@@ -1,31 +1,33 @@
 <?php
-$page_title = "Reviews";
-require_once 'includes/header.php';
+ob_start();
+
 
 include '../config/db.php';
 
-// Handle approve/reject actions
+// Handle actions
 if (isset($_GET['action']) && isset($_GET['id'])) {
-    $id = (int)$_GET['id'];
-    $action = $_GET['action'];
-    
+
+    $id = (int) $_GET['id'];
+    $action = $_GET['action'] ?? '';
+
     if ($action === 'approve') {
-        mysqli_query($conn, "UPDATE reviews SET status = 'approved' WHERE id = $id");
-        $_SESSION['toast'] = ['message' => 'Review approved successfully!', 'type' => 'success'];
+        mysqli_query($conn, "UPDATE reviews SET status='approved' WHERE id=$id");
     } elseif ($action === 'reject') {
-        mysqli_query($conn, "UPDATE reviews SET status = 'rejected' WHERE id = $id");
-        $_SESSION['toast'] = ['message' => 'Review rejected!', 'type' => 'info'];
+        mysqli_query($conn, "UPDATE reviews SET status='rejected' WHERE id=$id");
     } elseif ($action === 'delete') {
-        mysqli_query($conn, "DELETE FROM reviews WHERE id = $id");
-        $_SESSION['toast'] = ['message' => 'Review deleted!', 'type' => 'success'];
+        mysqli_query($conn, "DELETE FROM reviews WHERE id=$id");
     }
-    
-    header('Location: reviews.php');
+
+    header("Location: reviews.php");
     exit;
 }
 
-$reviews = mysqli_query($conn, "SELECT * FROM reviews ORDER BY id DESC");
+$page_title = "Reviews";
+require_once 'includes/header.php';
+
+$reviews = mysqli_query($conn, "SELECT * FROM reviews ORDER BY id ASC");
 ?>
+
 
 <!-- PAGE HEADER -->
 <div class="page-header">
@@ -75,7 +77,7 @@ $reviews = mysqli_query($conn, "SELECT * FROM reviews ORDER BY id DESC");
                             </td>
                             <td>
                                 <div style="max-width: 300px;">
-                                    <?php echo htmlspecialchars($review['review']); ?>
+                                    <?php echo htmlspecialchars($review['message'] ?? ''); ?>
                                 </div>
                             </td>
                             <td>
@@ -134,25 +136,53 @@ $reviews = mysqli_query($conn, "SELECT * FROM reviews ORDER BY id DESC");
 <!-- STATS SUMMARY -->
 <div class="stats-grid mt-24">
     <div class="stat-card">
-        <div class="stat-card-icon">⭐</div>
+        <div class="stat-card-icon"><!-- STAR -->
+<svg xmlns="http://www.w3.org/2000/svg" 
+width="24" 
+height="24" 
+viewBox="0 0 24 24" 
+fill="black">
+  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+</svg></div>
         <div class="stat-card-value"><?php echo mysqli_num_rows($reviews); ?></div>
         <div class="stat-card-label">Total Reviews</div>
     </div>
 
     <div class="stat-card">
-        <div class="stat-card-icon">⏳</div>
+        <div class="stat-card-icon"><!-- HOURGLASS -->
+<svg xmlns="http://www.w3.org/2000/svg" 
+width="24" 
+height="24" 
+viewBox="0 0 24 24" 
+fill="black">
+  <path d="M6 2V8C6 10.21 7.79 12 10 12C7.79 12 6 13.79 6 16V22H18V16C18 13.79 16.21 12 14 12C16.21 12 18 10.21 18 8V2H6ZM16 4V7.17L12 11L8 7.17V4H16ZM8 19V16.83L12 13L16 16.83V19H8Z"/>
+</svg></div>
         <div class="stat-card-value"><?php echo mysqli_num_rows(mysqli_query($conn, "SELECT id FROM reviews WHERE status = 'pending'")); ?></div>
         <div class="stat-card-label">Pending</div>
     </div>
 
     <div class="stat-card">
-        <div class="stat-card-icon">✅</div>
+        <div class="stat-card-icon"><!-- APPROVED CHECK -->
+<svg xmlns="http://www.w3.org/2000/svg" 
+width="24" 
+height="24" 
+viewBox="0 0 24 24" 
+fill="black">
+  <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z"/>
+</svg></div>
         <div class="stat-card-value"><?php echo mysqli_num_rows(mysqli_query($conn, "SELECT id FROM reviews WHERE status = 'approved'")); ?></div>
         <div class="stat-card-label">Approved</div>
     </div>
 
     <div class="stat-card">
-        <div class="stat-card-icon">⭐</div>
+        <div class="stat-card-icon"><!-- STAR -->
+<svg xmlns="http://www.w3.org/2000/svg" 
+width="24" 
+height="24" 
+viewBox="0 0 24 24" 
+fill="black">
+  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+</svg></div>
         <?php 
         $avg_rating = mysqli_fetch_assoc(mysqli_query($conn, "SELECT AVG(rating) as avg FROM reviews WHERE status = 'approved'"));
         $avg = $avg_rating['avg'] ? round($avg_rating['avg'], 1) : '0';

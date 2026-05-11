@@ -136,7 +136,7 @@
 
             <div class="form-group">
               <label>Preferred Time *</label>
-              <input type="time" name="appointment_time" required>
+              <input type="time" name="appointment_time" min="10:30" max="19:00" step="1800" required>
             </div>
           </div>
 
@@ -144,6 +144,83 @@
             <label>Additional Notes</label>
             <textarea name="notes" rows="5" placeholder="Any special requests or concerns about your pet..."></textarea>
           </div>
+
+ 
+            <!-- PAYMENT SECTION -->
+
+<div class="payment-method-section">
+
+    <label class="payment-title">
+        Select Payment Method
+    </label>
+
+    <div class="payment-options">
+
+        <!-- CASH -->
+
+        <label class="payment-card">
+
+            <input
+                type="radio"
+                name="payment_method"
+                value="cash"
+                checked
+            >
+
+            <div class="payment-content">
+                <h4>Cash</h4>
+            </div>
+
+        </label>
+
+
+        <!-- ONLINE -->
+
+        <label class="payment-card">
+
+            <input
+                type="radio"
+                name="payment_method"
+                value="online"
+                id="onlinePayment"
+            >
+
+            <div class="payment-content">
+                <h4>Online</h4>
+            </div>
+
+        </label>
+
+    </div>
+
+</div>
+
+
+
+<!-- QR POPUP -->
+
+<div class="qr-popup-overlay" id="qrPopup">
+
+    <div class="qr-popup-box">
+
+        <button
+            type="button"
+            class="close-qr-btn"
+            id="closeQrBtn"
+        >
+            ×
+        </button>
+
+        <img
+            src="assets/images/qr.png"
+            alt="QR Code"
+            class="qr-popup-image"
+        >
+
+    </div>
+
+</div>
+
 
           <button type="submit" class="appt-btn">Book Appointment</button>
         </form>
@@ -203,6 +280,7 @@
     </div>
   </div>
 </section>
+
 
 <script src="assets/js/book-appointment.js"></script>
 <?php include "includes/footer.php"; ?>

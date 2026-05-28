@@ -303,6 +303,49 @@
   }
 }
 
+@media (max-width: 480px){
+  .appt-hero h1{
+    font-size: 30px;
+  }
+
+  .appt-hero p{
+    font-size: 16px;
+  }
+
+  .appt-faq h2{
+    font-size: 28px;
+  }
+
+  .faq-item h4{
+    font-size: 20px;
+  }
+
+  .faq-item p{
+    font-size: 15px;
+  }
+
+  .appt-form h2{
+    font-size: 18px;
+  }
+
+  .appt-form input,
+  .appt-form select,
+  .appt-form textarea{
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+
+  .pet-type-pills{
+    gap: 8px;
+  }
+
+  .pet-pill span{
+    min-width: 85px;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}
+
 
 /* =========================
    PAYMENT SECTION

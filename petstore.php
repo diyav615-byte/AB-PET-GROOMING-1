@@ -1,10 +1,4 @@
 <?php include 'includes/header.php'; ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pet Store</title>
 
 <style>
 
@@ -55,6 +49,36 @@ body{
 @media(max-width:600px){
   .petGrid{
     grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .storeTitle{
+    font-size: 34px;
+    margin-top: 40px;
+  }
+
+  .storeSub{
+    font-size: 15px;
+  }
+}
+
+@media(max-width:400px){
+  .storeTitle{
+    font-size: 28px;
+  }
+
+  .contactBtns{
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .whatsappBtn,
+  .callBtn{
+    width: 100%;
+    max-width: 220px;
+    padding: 12px 20px;
+    font-size: 14px;
   }
 }
 
@@ -198,5 +222,3 @@ body{
 
 </div>
 <?php include "includes/footer.php"; ?>
-</body>
-</html>

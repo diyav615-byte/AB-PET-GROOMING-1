@@ -15,6 +15,36 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+            <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const sidebar = document.querySelector('.sidebar');
+            
+            if (mobileMenuBtn && sidebar) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                });
+                
+                const closeBtn = sidebar.querySelector('.sidebar-close-btn');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', function() {
+                        sidebar.classList.remove('active');
+                    });
+                }
+            }
+            
+            // Close sidebar when clicking outside on mobile/tablet
+            document.addEventListener('click', function(event) {
+                if (window.innerWidth <= 991) {
+                    if (sidebar && sidebar.classList.contains('active') && 
+                        !sidebar.contains(event.target) && 
+                        !mobileMenuBtn.contains(event.target)) {
+                        sidebar.classList.remove('active');
+                    }
+                }
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="wrapper">
@@ -25,6 +55,9 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     <div class="logo-box"><img src="../assets/images/logo.png" alt="Logo"></div>
                     <span class="sidebar-logo-text">AB Pet Grooming</span>
                 </div>
+                <button class="sidebar-close-btn" aria-label="Close sidebar">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
 
             <ul class="sidebar-menu">
@@ -99,9 +132,12 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
         <main class="main-content">
             <!-- TOP NAVBAR -->
             <div class="top-navbar">
-                <div class="navbar-left">
-                    <div class="navbar-title"><?php echo isset($page_title) ? htmlspecialchars($page_title) : 'Dashboard'; ?></div>
-                </div>
+            <div class="navbar-left">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="navbar-title"><?php echo isset($page_title) ? htmlspecialchars($page_title) : 'Dashboard'; ?></div>
+            </div>
                 <div class="navbar-right">
 
     <div class="global-search-wrapper">
@@ -114,10 +150,11 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             class="global-search"
             placeholder="Search anything..."
         >
-
-</div>
-
-</div>
-                    
-                   
             </div>
+
+                </div> <!-- close navbar-right -->
+            </div> <!-- close top-navbar -->
+        </main> <!-- close main-content -->
+    </div> <!-- close wrapper -->
+</body>
+</html>

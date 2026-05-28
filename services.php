@@ -251,7 +251,72 @@ body, .services-page{
     align-items:flex-start;
   }
 
-  
+}
+
+@media (max-width:480px){
+  .svc-hero h1{
+    font-size: 32px;
+  }
+
+  .svc-hero p{
+    font-size: 16px;
+  }
+
+  .svc-wrap{
+    padding: 30px 0 60px;
+  }
+
+  .svc-toggle{
+    max-width: 100%;
+    padding: 8px;
+  }
+
+  .svc-tab{
+    font-size: 16px;
+    padding: 12px 14px;
+  }
+
+  .svc-section-title{
+    font-size: 26px;
+  }
+
+  .svc-card{
+    padding: 20px;
+  }
+
+  .svc-card h3{
+    font-size: 18px;
+  }
+
+  .svc-price-table{
+    gap: 8px;
+  }
+
+  .svc-row b{
+    font-size: 18px;
+  }
+
+  .svc-banner{
+    padding: 22px 20px;
+  }
+
+  .svc-banner h3{
+    font-size: 22px;
+  }
+
+  .svc-banner p{
+    font-size: 14px;
+  }
+
+  .svc-banner-btn{
+    width: 100%;
+    text-align: center;
+  }
+
+  .book-center a{
+    width: 100%;
+    display: block;
+  }
 }
 </style>
 

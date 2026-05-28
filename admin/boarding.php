@@ -719,10 +719,9 @@ function deleteRow(id, table){
 }
 
 #boardingTable{
-    width:100%;
-    min-width:1350px;
-    border-collapse:collapse;
-    background:#fff;
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
 }
 
 #boardingTable thead{

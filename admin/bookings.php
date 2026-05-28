@@ -719,9 +719,8 @@ $payment = isset($row['payment_method'])
 
 /* TABLE */
 #appointmentsTable{
-    min-width: 1450px;
-    width: 1450px;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 /* CELLS */

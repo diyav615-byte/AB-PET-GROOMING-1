@@ -13,6 +13,10 @@
   const navBookBtn = document.getElementById("navBookBtn");
   const heroBookBtn = document.getElementById("heroBookBtn");
 
+  // Mobile menu toggle
+  const navToggle = document.querySelector('.nav-toggle');
+  const navMenu = document.querySelector('.nav');
+
   if (!heroBg || !heroImage) return;
 
   const slides = [
@@ -82,4 +86,29 @@
     current = (current + 1) % slides.length;
     applySlide(current, true);
   }, 4000);
+
+  // Mobile menu toggle functionality
+  if (navToggle && navMenu) {
+    navToggle.addEventListener('click', () => {
+      navToggle.classList.toggle('active');
+      navMenu.classList.toggle('active');
+    });
+
+    // Close menu when clicking a link
+    const navLinks = navMenu.querySelectorAll('a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        navToggle.classList.remove('active');
+        navMenu.classList.remove('active');
+      });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!navToggle.contains(e.target) && !navMenu.contains(e.target)) {
+        navToggle.classList.remove('active');
+        navMenu.classList.remove('active');
+      }
+    });
+  }
 })();

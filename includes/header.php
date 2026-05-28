@@ -13,26 +13,23 @@
 
 <header class="site-header">
   <div class="container nav-inner">
-    
-   <a class="brand" href="#">
-  <img src="assets/images/logo.png" alt="Logo" class="logo">
-  <span>AB Pet Grooming Store</span>
-</a>
+     
+    <a class="brand" href="#">
+   <img src="assets/images/logo.png" alt="Logo" class="logo">
+   <span>AB Pet Grooming Store</span>
+ </a>
 
-    <nav class="nav">
-      <a href="index.php">Home</a>
-      <a href="about.php">About Us</a>
-      <a href="services.php">Services</a>
-      <a href="boarding.php">Boarding</a>
-      <a href="petstore.php">Pet Store</a>
-      <a href="contact.php">Contact</a>
-    </nav>
-
-    <div class="nav-buttons">
-      <a href="book-appointment.php" class="btn-pill btn-solid">Book Appointment</a>
-      <a href="https://wa.me/918828719786" target="_blank" class="btn-pill btn-wa">WhatsApp</a>
-      <a href="https://instagram.com/abrar_shaikhsk__" target="_blank" class="btn-pill btn-ig">Instagram</a>
+     <button class="nav-toggle" aria-label="Toggle navigation">
+      <span class="hamburger"></span>
+    </button>
+       
+        <nav class="nav">
+        <a href="index.php">Home</a>
+        <a href="about.php">About Us</a>
+        <a href="services.php">Services</a>
+        <a href="boarding.php">Boarding</a>
+        <a href="petstore.php">Pet Store</a>
+        <a href="contact.php">Contact</a>
+       </nav>
     </div>
-
-  </div>
-</header>
+ </header>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'auth_check.php';
+require_once '../auth_check.php';
 
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
 ?>
@@ -133,27 +133,27 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             <!-- TOP NAVBAR -->
             <div class="top-navbar">
             <div class="navbar-left">
-                <button class="mobile-menu-btn" id="mobileMenuBtn">
-                    <i class="fas fa-bars"></i>
-                </button>
                 <div class="navbar-title"><?php echo isset($page_title) ? htmlspecialchars($page_title) : 'Dashboard'; ?></div>
             </div>
                 <div class="navbar-right">
+                    <div class="global-search-wrapper">
 
-    <div class="global-search-wrapper">
+                        <i class="fas fa-search global-search-icon"></i>
 
-        <i class="fas fa-search global-search-icon"></i>
+                        <input
+                            type="text"
+                            id="globalSearch"
+                            class="global-search"
+                            placeholder="Search anything..."
+                        >
+                            </div>
 
-        <input
-            type="text"
-            id="globalSearch"
-            class="global-search"
-            placeholder="Search anything..."
-        >
-            </div>
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>
 
-                </div> <!-- close navbar-right -->
-            </div> <!-- close top-navbar -->
+                    </div> <!-- close navbar-right -->
+                </div> <!-- close top-navbar -->
         </main> <!-- close main-content -->
     </div> <!-- close wrapper -->
 </body>

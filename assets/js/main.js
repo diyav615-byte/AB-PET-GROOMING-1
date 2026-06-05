@@ -1,134 +1,23 @@
-// main.js
 (function () {
-  const heroBg = document.getElementById("heroBg");
-  const blob1 = document.getElementById("blob1");
-  const blob2 = document.getElementById("blob2");
-  const blob3 = document.getElementById("blob3");
-
-  const heroImage = document.getElementById("heroImage");
-  const heroBig = document.getElementById("heroBig");
-  const heroSub = document.getElementById("heroSub");
-  const heroDesc = document.getElementById("heroDesc");
-
-  const navBookBtn = document.getElementById("navBookBtn");
-  const heroBookBtn = document.getElementById("heroBookBtn");
-
-  // Mobile menu toggle
-  const navToggle = document.querySelector('.nav-toggle');
-  const navMenu = document.querySelector('.nav');
-
-  // Mobile menu toggle functionality (runs on all pages)
-  if (navToggle && navMenu) {
-    navToggle.addEventListener('click', () => {
-      navToggle.classList.toggle('active');
-      navMenu.classList.toggle('active');
-    });
-
-    // Close menu when clicking a link
-    const navLinks = navMenu.querySelectorAll('a');
-    navLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        navToggle.classList.remove('active');
-        navMenu.classList.remove('active');
-      });
-    });
-
-    // Close menu when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!navToggle.contains(e.target) && !navMenu.contains(e.target)) {
-        navToggle.classList.remove('active');
-        navMenu.classList.remove('active');
-      }
-    });
-  }
-
-  // Hero slider functionality (only runs on index page)
-  if (!heroBg || !heroImage) return;
-
-  const slides = [
-    {
-      big: "pawsome",
-      sub: "place for your pet",
-      desc: "Premium grooming, safe boarding and pet care for dogs and cats. Clean, gentle and stress-free service.",
-      image: "assets/images/hero/dog-hero.png",
-      bg: "linear-gradient(110deg, #eadcff, #f9f6ff)", // ✅ purple theme
-      b1: "#d6c6ff",
-      b2: "#ffe0ea",
-      b3: "#fff4c8",
-      btn: "#4a1fb8" // ✅ darker than bg
-    },
-    {
-      big: "purrfect",
-      sub: "place for your pet",
-      desc: "Gentle grooming & loving care for cats too. Soft handling, safe products and premium comfort.",
-      image: "assets/images/hero/cat-hero.png",
-      bg: "linear-gradient(110deg, #ffd9e6, #fff7fb)", // ✅ pink theme
-      b1: "#ffc2d6",
-      b2: "#d6c6ff",
-      b3: "#fff4c8",
-      btn: "#b32558" // ✅ darker than bg
-    }
-  ];
-
-  let current = 0;
-
-  function applySlide(i, animate = true) {
-    const s = slides[i];
-
-    if (animate) {
-      heroImage.classList.remove("fade-in");
-      heroImage.classList.add("fade-out");
-    }
-
-    // background colors
-    heroBg.style.background = s.bg;
-    blob1.style.background = s.b1;
-    blob2.style.background = s.b2;
-    blob3.style.background = s.b3;
-
-    // button color
-    if (navBookBtn) navBookBtn.style.background = s.btn;
-    if (heroBookBtn) heroBookBtn.style.background = s.btn;
-
-    // text
-    heroBig.textContent = s.big;
-    heroSub.textContent = s.sub;
-    heroDesc.textContent = s.desc;
-
-    // image switch with animation
-    setTimeout(() => {
-      heroImage.src = s.image;
-
-      heroImage.classList.remove("fade-out");
-      heroImage.classList.add("fade-in");
-    }, animate ? 450 : 0);
-  }
-
-  // initial
-  applySlide(current, false);
-
-  // auto slider
-  setInterval(() => {
-    current = (current + 1) % slides.length;
-    applySlide(current, true);
-  }, 4000);
-
-})();
-
-
+  "use strict";
 
   document.addEventListener('DOMContentLoaded', () => {
+    
+    // ==========================================
+    // 1. MOBILE DROPDOWN HAMBURGER LOGIC
+    // ==========================================
     const navToggle = document.querySelector('.nav-toggle');
     const navMenu = document.querySelector('.nav');
 
     if (navToggle && navMenu) {
+      // Toggle menu state on button click
       navToggle.addEventListener('click', (e) => {
         e.stopPropagation();
         navToggle.classList.toggle('active');
         navMenu.classList.toggle('active');
       });
 
-      // Optional: Close the menu when clicking a link inside it
+      // Close menu when clicking any link inside it
       const navLinks = navMenu.querySelectorAll('a');
       navLinks.forEach(link => {
         link.addEventListener('click', () => {
@@ -137,7 +26,7 @@
         });
       });
 
-      // Fixed Section: Close the menu if clicking anywhere outside of it
+      // Close menu panel automatically if user clicks anywhere outside
       document.addEventListener('click', (e) => {
         if (!navMenu.contains(e.target) && !navToggle.contains(e.target)) {
           navToggle.classList.remove('active');
@@ -145,4 +34,82 @@
         }
       });
     }
+
+    // ==========================================
+    // 2. HERO SLIDER LOGIC (Index Page Only Safeguard)
+    // ==========================================
+    const heroBg = document.getElementById("heroBg");
+    const heroImage = document.getElementById("heroImage");
+
+    if (heroBg && heroImage) {
+      const blob1 = document.getElementById("blob1");
+      const blob2 = document.getElementById("blob2");
+      const blob3 = document.getElementById("blob3");
+      const heroBig = document.getElementById("heroBig");
+      const heroSub = document.getElementById("heroSub");
+      const heroDesc = document.getElementById("heroDesc");
+      const navBookBtn = document.getElementById("navBookBtn");
+      const heroBookBtn = document.getElementById("heroBookBtn");
+
+      const slides = [
+        {
+          big: "pawsome",
+          sub: "place for your pet",
+          desc: "Premium grooming, safe boarding and pet care for dogs and cats. Clean, gentle and stress-free service.",
+          image: "assets/images/hero/dog-hero.png",
+          bg: "linear-gradient(110deg, #eadcff, #f9f6ff)",
+          b1: "#d6c6ff",
+          b2: "#ffe0ea",
+          b3: "#fff4c8",
+          btn: "#4a1fb8"
+        },
+        {
+          big: "purrfect",
+          sub: "place for your pet",
+          desc: "Gentle grooming & loving care for cats too. Soft handling, safe products and premium comfort.",
+          image: "assets/images/hero/cat-hero.png",
+          bg: "linear-gradient(110deg, #ffd9e6, #fff7fb)",
+          b1: "#ffc2d6",
+          b2: "#d6c6ff",
+          b3: "#fff4c8",
+          btn: "#b32558"
+        }
+      ];
+
+      let current = 0;
+
+      function applySlide(i, animate = true) {
+        const s = slides[i];
+
+        if (animate) {
+          heroImage.classList.remove("fade-in");
+          heroImage.classList.add("fade-out");
+        }
+
+        heroBg.style.background = s.bg;
+        if (blob1) blob1.style.background = s.b1;
+        if (blob2) blob2.style.background = s.b2;
+        if (blob3) blob3.style.background = s.b3;
+        if (navBookBtn) navBookBtn.style.background = s.btn;
+        if (heroBookBtn) heroBookBtn.style.background = s.btn;
+        if (heroBig) heroBig.textContent = s.big;
+        if (heroSub) heroSub.textContent = s.sub;
+        if (heroDesc) heroDesc.textContent = s.desc;
+
+        setTimeout(() => {
+          heroImage.src = s.image;
+          heroImage.classList.remove("fade-out");
+          heroImage.classList.add("fade-in");
+        }, animate ? 450 : 0);
+      }
+
+      applySlide(current, false);
+
+      setInterval(() => {
+        current = (current + 1) % slides.length;
+        applySlide(current, true);
+      }, 1000);
+    }
+
   });
+})();

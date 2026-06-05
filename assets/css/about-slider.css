@@ -1,41 +1,65 @@
-:root{
-  --royal:#7158a6;
-  --light:#482384;
-  --white:#621080;
+:root {
+  --royal: #7158a6;
+  --light: #482384;
+  --white: #621080;
 }
 
-/* SECTION */
-.story-flow{
+/* ===== GENERAL RESET & SAFETY ===== */
+html, body {
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
+  background: #f6f4ff;
+  font-family: 'Poppins', sans-serif;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+img, video {
+  max-width: 100%;
+  display: block;
+}
+
+.aboutPage {
+  overflow-x: hidden;
+}
+
+/* ===== STORY SECTION ===== */
+.story-flow {
   padding: 60px 0;
   background: linear-gradient(180deg, #7158a6, #ffffff);
   position: relative;
 }
 
-/* SOFT GLOW BACKGROUND */
-.story-flow::before{
-  content:"";
-  position:absolute;
-  width:500px;
-  height:500px;
+.story-flow::before {
+  content: "";
+  position: absolute;
+  width: 500px;
+  height: 500px;
   background: radial-gradient(circle, rgba(113,88,166,0.25), transparent 70%);
-  top:-150px;
-  left:-150px;
-  z-index:0;
+  top: -150px;
+  left: -150px;
+  z-index: 0;
 }
 
-.story-flow::after{
-  content:"";
-  position:absolute;
-  width:400px;
-  height:400px;
+.story-flow::after {
+  content: "";
+  position: absolute;
+  width: 400px;
+  height: 400px;
   background: radial-gradient(circle, rgba(113,88,166,0.18), transparent 70%);
-  bottom:-150px;
-  right:-100px;
-  z-index:0;
+  bottom: -150px;
+  right: -100px;
+  z-index: 0;
 }
 
-/* CONTAINER */
-.story-flow .container{
+.story-flow .container {
   position: relative;
   z-index: 2;
   width: 90%;
@@ -46,8 +70,7 @@
   gap: 90px;
 }
 
-/* CARD STYLE BLOCK */
-.story-block{
+.story-block {
   background: rgba(255,255,255,0.7);
   backdrop-filter: blur(12px);
   border-radius: 20px;
@@ -55,28 +78,24 @@
   max-width: 600px;
   box-shadow: 0 20px 50px rgba(0,0,0,0.08);
   border: 1px solid rgba(113,88,166,0.15);
-
   transition: all 0.4s ease;
 }
 
-/* HOVER EFFECT */
-.story-block:hover{
+.story-block:hover {
   transform: translateY(-6px) scale(1.01);
   box-shadow: 0 25px 60px rgba(113,88,166,0.18);
 }
 
-/* LEFT RIGHT STYLE */
-.story-block:nth-child(2){
+.story-block:nth-child(2) {
   margin-left: auto;
   text-align: right;
 }
 
-.story-block:nth-child(3){
+.story-block:nth-child(3) {
   margin-right: auto;
 }
 
-/* HEADING */
-.story-block h2{
+.story-block h2 {
   font-size: 34px;
   font-weight: 900;
   margin-bottom: 12px;
@@ -84,85 +103,68 @@
   letter-spacing: -0.5px;
 }
 
-/* TEXT */
-.story-block p{
+.story-block p {
   font-size: 16px;
   line-height: 1.8;
   color: #4a4a4a;
 }
 
-/* RESPONSIVE */
-@media(max-width:768px){
-  .story-block{
-    margin: 0 !important;
-    text-align: left !important;
-  }
-
-  .story-block h2{
-    font-size: 26px;
-  }
-}
-
-/* ===== ROYAL FULL BG ===== */
-.awardsStack{
+/* ===== AWARDS STACK SECTION ===== */
+.awardsStack {
   padding: 100px 0;
-  background: #7158a6; /* FULL royal robes */
+  background: #7158a6;
   overflow: hidden;
 }
 
-/* ===== CENTER HEADING ===== */
-.awardsHead{
+.awardsHead {
   text-align: center;
   margin-bottom: 30px;
 }
 
-.awardsHead h3{
+.awardsHead h3 {
   font-size: 40px;
   font-weight: 900;
   color: #fff;
   margin-bottom: 10px;
 }
 
-.awardsHead p{
+.awardsHead p {
   font-size: 18px;
   color: rgba(255,255,255,0.85);
   max-width: 700px;
   margin: auto;
 }
 
-/* ===== REMOVE ARROWS ===== */
-.stackBtn{
+.stackBtn {
   display: none;
 }
 
-/* ===== STAGE ===== */
-.stackStage{
+.stackStage {
   overflow: hidden;
+  width: 100%;
   max-width: 950px;
   margin: auto;
   position: relative;
 }
 
-/* ===== TRACK ===== */
-.stackTrack{
+.stackTrack {
   display: flex;
   align-items: center;
+  width: max-content;
   transition: transform 0.8s ease;
   will-change: transform;
-
 }
 
-/* ===== ITEMS ===== */
-.stackItem{
+.stackItem {
   flex: 0 0 260px;
   margin: 0 15px;
   opacity: 0.4;
   transform: scale(0.85);
   transition: all 0.5s ease;
+  flex-shrink: 0;
 }
 
-/* ===== IMAGE ===== */
-.stackItem img{
+.stackItem img {
   width: 100%;
   aspect-ratio: 2/3;
   object-fit: cover;
@@ -170,40 +172,34 @@
   box-shadow: 0 20px 60px rgba(0,0,0,0.35);
 }
 
-/* ===== CENTER POP EFFECT ===== */
-.stackItem.active{
+.stackItem.active {
   opacity: 1;
   transform: scale(1.1);
-}
-
-/* ===== MOBILE ===== */
-@media(max-width:768px){
-  .stackItem{
-    flex: 0 0 200px;
-  }
 }
 
 /* ===== REELS SECTION ===== */
 .reelsSection {
   padding: 80px 0;
   background: linear-gradient(135deg, #f5f0ff 0%, #d7d2e2 25%, #b6abd2 50%, #8b80b0 75%, #7158a6 100%);
+  position: relative;
+  z-index: 10; /* Forces the entire block way above the review section below it */
 }
 
 .reelsSection .container {
   width: 90%;
-  max-width: 1100px;
+  max-width: 480px; 
   margin: 0 auto;
-  background: rgba(186,181,181,0.06);
+  background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(20px);
   border-radius: 30px;
   padding: 40px 20px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
   box-sizing: border-box;
 }
 
 .reelsHead {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 35px;
 }
 
 .reelsHead h2 {
@@ -221,51 +217,49 @@
   color: rgba(77,29,118,0.7);
 }
 
-/* WRAP — holds arrows + viewport */
 .reelsWrap {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 0;
+  justify-content: center;
+  width: 100%;
 }
 
-/* VIEWPORT — clips the track */
 .reelsViewport {
-  flex: 1;
+  width: 100%;
   overflow: hidden;
-  min-width: 0;  /* critical flex fix */
+  position: relative;
+  z-index: 5;
 }
 
-/* TRACK — slides sit in a row */
 .reelsTrack {
   display: flex;
-  flex-wrap: nowrap;     /* Forces all reels to stay on one single horizontal row */
-  width: max-content;    /* Allows the slider track to expand infinitely horizontally */
+  flex-wrap: nowrap;
+  width: 100%;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
 }
 
-/* SLIDE */
 .reelSlide {
-  flex: 0 0 33.3333%;
-  min-width: 0;
+  flex: 0 0 100% !important;
+  width: 100% !important;
+  flex-shrink: 0;
   display: flex;
   justify-content: center;
-  padding: 10px 8px;
+  padding: 10px 0;
   box-sizing: border-box;
-  transition: transform 0.45s ease, opacity 0.45s ease;
 }
 
-/* CARD — 9:16 ratio, no hardcoded min-height */
 .reelCard {
   width: 100%;
-  max-width: 260px;
+  max-width: 230px; 
   aspect-ratio: 9 / 16;
-  border-radius: 26px;
+  border-radius: 22px;
   overflow: hidden;
   background: #111;
-  box-shadow: 0 18px 42px rgba(42,20,67,0.12);
-  border: 1px solid rgba(113,88,166,0.10);
-  transition: transform 0.45s ease, box-shadow 0.45s ease, opacity 0.45s ease;
+  box-shadow: 0 15px 45px rgba(42,20,67,0.2);
 }
+
 .reelVideo {
   width: 100%;
   height: 100%;
@@ -273,38 +267,45 @@
   display: block;
 }
 
-/* FOCUS STATES */
-.reelSlide.is-center .reelCard {
-  transform: scale(1.05);
-  box-shadow: 0 24px 56px rgba(42,20,67,0.22);
-}
-
-.reelSlide.is-side .reelCard {
-  transform: scale(0.88);
-  opacity: 0.65;
-}
-
-/* ARROWS */
+/* BUTTON CONTROLS ACCESSIBILITY STYLES */
 .reelBtn {
-  flex-shrink: 0;
-  width: 42px;
-  height: 42px;
-  border: none;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.92);
-  color: #2a1443;
-  font-size: 22px;
-  font-weight: 900;
-  line-height: 1;
-  box-shadow: 0 8px 20px rgba(42,20,67,0.15);
-  cursor: pointer;
-  z-index: 10;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: absolute;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 44px !important;
+  height: 44px !important;
+  border: none !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  color: #2a1443 !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+  cursor: pointer !important;
+  
+  /* Pushes buttons to absolute top tier layer */
+  z-index: 99999 !important; 
+  pointer-events: auto !important;
+  
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18) !important;
+  transition: all 0.2s ease !important;
 }
 
-.reelBtn:hover {
-  transform: scale(1.06);
-  box-shadow: 0 12px 28px rgba(42,20,67,0.22);
+.reelPrev {
+  left: -22px !important;
+  right: auto !important;
+}
+
+.reelNext {
+  right: -22px !important;
+  left: auto !important;
+}
+
+.reelBtn:hover:not([style*="not-allowed"]) {
+  background: #f5f0ff !important;
+  transform: translateY(-50%) scale(1.08) !important;
 }
 
 /* DOTS */
@@ -312,7 +313,7 @@
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 25px;
 }
 
 .reelsDots .dot {
@@ -334,7 +335,7 @@
 /* INSTAGRAM BUTTON */
 .reelsInstagram {
   text-align: center;
-  margin-top: 28px;
+  margin-top: 30px;
 }
 
 .instaBtn {
@@ -352,21 +353,169 @@
 
 .instaBtn:hover {
   transform: translateY(-2px);
-  background: #5a3d8a;
+  background: linear-gradient(135deg, #1f0650, #a393c7);
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== REVIEW SECTION ===== */
+.review-section {
+  padding: 70px 20px;
+  background: linear-gradient(135deg,#8a73ad,#7158a6);
+  color: #fff;
+  overflow: hidden;
+  position: relative;
+  z-index: 1; /* Kept low to avoid masking the section content above */
+}
+
+.review-title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 900;
+  margin-bottom: 40px;
+}
+
+.carousel {
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 20px;
+  width: max-content;
+  animation: scroll 20s linear infinite;
+}
+
+.review-card {
+  min-width: 300px;
+  max-width: 300px;
+  background: #fff;
+  color: #333;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  flex-shrink: 0;
+  animation: fadeUp 0.5s ease;
+}
+
+.review-text {
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.review-name {
+  font-weight: 700;
+}
+
+.stars {
+  font-size: 18px;
+}
+
+@keyframes scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== FORM CARD ===== */
+.form-card {
+  max-width: 600px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.form-card h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #4b2e83;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-weight: 600;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  outline: none;
+  transition: 0.3s;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #7b5cff;
+  box-shadow: 0 0 0 3px rgba(123,92,255,0.1);
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 30px;
+  background: linear-gradient(135deg,#7b5cff,#b58dff);
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(123,92,255,0.3);
+}
+
+/* ===== RESPONSIVE MEDIA QUERIES ===== */
 @media (max-width: 900px) {
-  .reelSlide {
-    flex: 0 0 50%;
+  .about-reviews-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .story-block {
+    margin: 0 !important;
+    text-align: left !important;
   }
 
-  .reelCard {
-    max-width: 280px;
+  .story-block h2 {
+    font-size: 26px;
   }
 
-  .reelsSection .container {
-    padding: 35px 16px;
+  .stackItem {
+    flex: 0 0 200px;
+  }
+
+  .about-review-card {
+    min-width: 220px;
+  }
+}
+
+@media (max-width: 650px) {
+  .about-reviews-grid {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 }
 
@@ -375,342 +524,68 @@
     width: 100%;
     max-width: 100%;
     margin: 0 auto;
-    padding: 30px 12px;
+    padding: 30px 5px;
     border-radius: 0;
-    overflow: hidden;
-  }
-
-  .reelsViewport {
-    padding: 100%;
-    overflow-x: hidden;
-    overflow-y: visible;
-  }
-
-  .reelSlide {
-    flex: 0 0 100%;
-    padding: 10px 0;
-    display: flex;
-    justify-content: center;
   }
 
   .reelCard {
-    max-width: 75vw;
-    min-width: 200px;
+    max-width: 210px; 
+    min-width: 190px;
   }
 
- .reelsWrap {
-    position: relative;
-    display: block; /* Turns off flex properties squeezing the viewport */
+  .reelBtn {
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 14px !important;
   }
   
-  .reelBtn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 15;
+  .reelPrev {
+    left: 4px !important;
   }
 
-  .reelsHead h2 {
-    font-size: 24px;
-  }
-
-  .reelsHead p {
-    font-size: 13px;
+  .reelNext {
+    right: 4px !important;
   }
 }
 
-@media (max-width: 480px) {
-  .reelsSection .container {
-    padding: 25px 8px;
+/* ==========================================================================
+   MOBILE REVIEW CAROUSEL COMPACT STYLES
+   ========================================================================== */
+@media (max-width: 767px) {
+  /* Targets the review card container/wrapper */
+  .testimonial-slider,
+  .review-container,
+  .swiper-container {
+    padding: 10px 20px !important;
+    width: 100% !important;
+    overflow: hidden !important;
   }
 
-  .reelCard {
-    max-width: 80vw;
-    min-width: 180px;
+  /* Makes the individual review box smaller and perfectly centered */
+  .testimonial-card,
+  .review-box,
+  .card-review {
+    width: 88% !important;
+    max-width: 310px !important; /* Forces a smaller, compact card width */
+    min-height: auto !important;
+    margin: 15px auto !important; /* Centers the box with uniform breathing room */
+    padding: 16px 20px !important; /* Snugger padding inside the box */
+    border-radius: 16px !important; /* Softer, balanced corners for smaller frames */
+    box-shadow: 0 10px 25px rgba(113, 88, 166, 0.08) !important;
   }
 
-  .reelBtn {
-    width: 32px;
-    height: 32px;
-    font-size: 16px;
+  /* Scales down review text so it doesn't crowd the smaller box */
+  .testimonial-card p,
+  .review-box p {
+    font-size: 13px !important;
+    line-height: 1.6 !important;
+    margin-bottom: 10px !important;
   }
 
-  .reelsHead h2 {
-    font-size: 20px;
-  }
-
-  .reelsHead p {
-    font-size: 12px;
-  }
-
-  .reelsDots .dot {
-    width: 8px;
-    height: 8px;
-  }
-
-  .reelsDots .dot.active {
-    width: 24px;
-  }
-}
-
-
-/* ===== INSTAGRAM BUTTON ===== */
-.reelsInstagram {
-  text-align: center;
-  margin-top: 30px;
-}
-
-.instaBtn {
-  display: inline-block;
-  padding: 12px 26px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #7158a6, #7158a6);
-  color: #fff;
-  font-weight: 700;
-  text-decoration: none;
-  font-size: 15px;
-  box-shadow: 0 10px 25px rgba(59, 34, 113, 0.3);
-  transition: 0.3s ease;
-}
-
-.instaBtn:hover {
-  transform: translateY(-2px);
-  background: linear-gradient(135deg, #1f0650, #a393c7);
-}
-
-.aboutPage {
-  overflow-x: hidden;
-}
-
-/* ===== REVIEW SECTION ===== */
-.review-section{
-  padding:70px 20px;
-  background: linear-gradient(135deg,#8a73ad,#7158a6);
-  color:#fff;
-  overflow:hidden;
-}
-
-/* TITLE CENTER */
-.review-title{
-  text-align:center;
-  font-size:36px;
-  font-weight:900;
-  margin-bottom:40px;
-}
-
-/* CAROUSEL */
-.carousel{
-  width:100%;
-  overflow:hidden;
-}
-
-/* ⭐ MOST IMPORTANT PART */
-.carousel-track{
-  display:flex;
-  flex-wrap:nowrap; /* prevents vertical stacking */
-  gap:20px;
-  width:max-content;
-  animation: scroll 20s linear infinite;
-}
-
-/* CARD */
-.review-card{
-  min-width:300px;
-  max-width:300px;
-  background:#fff;
-  color:#333;
-  padding:20px;
-  border-radius:15px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.2);
-  flex-shrink:0; /* prevents shrinking */
-}
-
-/* TEXT */
-.review-text{
-  margin:10px 0;
-  font-size:14px;
-}
-
-.review-name{
-  font-weight:700;
-}
-
-/* STARS */
-.stars{
-  font-size:18px;
-}
-
-/* SCROLL ANIMATION */
-@keyframes scroll{
-  0%{
-    transform: translateX(0);
-  }
-  100%{
-    transform: translateX(-50%);
-  }
-}
-
-/* ===== MOBILE ===== */
-@media (max-width: 768px) {
-  .about-review-card {
-    min-width: 220px;
-  }
-}
-
-
-body{
-  background:#f6f4ff;
-  font-family:'Poppins', sans-serif;
-}
-
-/* FORM CARD */
-.form-card{
-  max-width:600px;
-  margin:40px auto;
-  background:#fff;
-  padding:30px;
-  border-radius:20px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.1);
-}
-
-.form-card h2{
-  text-align:center;
-  margin-bottom:20px;
-  color:#4b2e83;
-}
-
-/* INPUTS */
-.form-group{
-  margin-bottom:15px;
-}
-
-.form-group label{
-  font-weight:600;
-  font-size:14px;
-  display:block;
-  margin-bottom:5px;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid #ddd;
-  outline:none;
-  transition:0.3s;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus{
-  border-color:#7b5cff;
-  box-shadow:0 0 0 3px rgba(123,92,255,0.1);
-}
-
-/* BUTTON */
-.btn{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:30px;
-  background:linear-gradient(135deg,#7b5cff,#b58dff);
-  color:#fff;
-  font-weight:bold;
-  cursor:pointer;
-  transition:0.3s;
-}
-
-.btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 10px 20px rgba(123,92,255,0.3);
-}
-
-.review-card{
-  background:#fff;
-  padding:15px;
-  margin:10px;
-  border-radius:10px;
-  animation:fadeUp 0.5s ease;
-}
-
-/* ===== FINAL SCROLLBAR FIX (ABOUT PAGE) ===== */
-
-/* 1. Prevent page overflow */
-html, body {
-  margin: 0;
-  padding: 0;
-  max-width: 100%;
-  overflow-x: clip; /* better than hidden */
-}
-
-/* 2. Container safety */
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* 3. SLIDER VIEWPORT FIX */
-.stackStage,
-.reelsViewport {
-  width: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  position: relative;
-}
-
-/* 4. TRACK FIX (MAIN ISSUE SOLVED HERE) */
-.stackTrack{
-  display: flex;
-  width: max-content;   /*  THIS FIXES OVERFLOW */
-}
-
-.reelsTrack {
-  display: flex;
-}
-
-/* 5. SLIDES */
-.stackItem,
-.reelSlide {
-  flex-shrink: 0;
-}
-
-/* 6. MEDIA SAFETY */
-img,
-video {
-  max-width: 100%;
-  display: block;
-}
-
-/* 7. ARROWS FIX (REMOVE NEGATIVE POSITION) */
-.stackBtn.left,
-.reelPrev {
-  left: 10px;
-}
-
-.stackBtn.right,
-.reelNext {
-  right: 10px;
-}
-
-/* 8. WR
-
-
-@keyframes fadeUp{
-  from{opacity:0; transform:translateY(20px);}
-  to{opacity:1; transform:translateY(0);}
-}
-
-@media(max-width:900px){
-  .about-reviews-grid{
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media(max-width:650px){
-  .about-reviews-grid{
-    grid-template-columns: 1fr;
+  /* Shrinks user profile info inside the review box */
+  .review-box .user-info,
+  .testimonial-card .author {
+    font-size: 12px !important;
+    gap: 8px !important;
   }
 }

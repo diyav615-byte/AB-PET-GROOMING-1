@@ -15,7 +15,7 @@
   <div class="container nav-inner">
      
     <a class="brand" href="index.php">
-      <img src="assets/images/logo.png" alt="Logo" class="logo">
+      <img src="assets/images/logo.png" alt="AB Pet Grooming Logo" class="logo">
       <span>AB Pet Grooming Store</span>
     </a>
 
@@ -29,7 +29,7 @@
       <a href="book-appointment.php" class="nav-btn">Book Appointment</a>
     </nav>
 
-    <button class="nav-toggle" aria-label="Toggle navigation">
+    <button class="nav-toggle" aria-label="Toggle navigation" type="button">
       <span class="hamburger"></span>
     </button>
      

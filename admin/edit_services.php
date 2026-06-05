@@ -1,7 +1,11 @@
-<?php include "../config/db.php";
+<?php
+include "../config/db.php";
 
-$id=$_GET['id'];
-$data=mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM services WHERE id=$id"));
+$id = (int)($_GET['id'] ?? 0);
+$data = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM services WHERE id=$id"));
+
+$page_title = 'Edit Service';
+require_once 'includes/header.php';
 
 if($_POST){
   $title=$_POST['title'];
@@ -17,21 +21,34 @@ if($_POST){
   WHERE id=$id");
 
   header("Location: services.php");
+  exit;
 }
 ?>
 
-<form method="POST">
+<div class="card admin-card">
+  <form method="POST" class="admin-form">
 
-<input name="title" value="<?= $data['title'] ?>"><br><br>
-<input name="price" value="<?= $data['price'] ?>"><br><br>
+    <h2 class="form-title">Edit Service</h2>
 
-<select name="category">
-<option <?= $data['category']=="Grooming"?"selected":"" ?>>Grooming</option>
-<option <?= $data['category']=="Boarding"?"selected":"" ?>>Boarding</option>
-</select><br><br>
+    <label>Service Title</label>
+    <input name="title" value="<?php echo htmlspecialchars($data['title'] ?? ''); ?>">
 
-<textarea name="description"><?= $data['description'] ?></textarea><br><br>
+    <label>Price</label>
+    <input name="price" value="<?php echo htmlspecialchars($data['price'] ?? ''); ?>">
 
-<button>Update</button>
+    <label>Category</label>
+    <select name="category">
+      <option value="Grooming" <?php if(($data['category'] ?? '')=='Grooming') echo 'selected'; ?>>Grooming</option>
+      <option value="Boarding" <?php if(($data['category'] ?? '')=='Boarding') echo 'selected'; ?>>Boarding</option>
+    </select>
 
-</form>
+    <label>Description</label>
+    <textarea name="description"><?php echo htmlspecialchars($data['description'] ?? ''); ?></textarea>
+
+    <br>
+    <button type="submit" class="btn btn-primary">Update</button>
+
+  </form>
+</div>
+
+<?php require_once 'includes/footer.php'; ?>

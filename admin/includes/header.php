@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once '../auth_check.php';
+require_once dirname(__DIR__) . '/auth_check.php';
+
 
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
 ?>
@@ -15,38 +16,8 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-            <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const sidebar = document.querySelector('.sidebar');
-            
-            if (mobileMenuBtn && sidebar) {
-                mobileMenuBtn.addEventListener('click', function() {
-                    sidebar.classList.toggle('active');
-                });
-                
-                const closeBtn = sidebar.querySelector('.sidebar-close-btn');
-                if (closeBtn) {
-                    closeBtn.addEventListener('click', function() {
-                        sidebar.classList.remove('active');
-                    });
-                }
-            }
-            
-            // Close sidebar when clicking outside on mobile/tablet
-            document.addEventListener('click', function(event) {
-                if (window.innerWidth <= 991) {
-                    if (sidebar && sidebar.classList.contains('active') && 
-                        !sidebar.contains(event.target) && 
-                        !mobileMenuBtn.contains(event.target)) {
-                        sidebar.classList.remove('active');
-                    }
-                }
-            });
-        });
-    </script>
 </head>
-<body>
+<body class="admin-page">
     <div class="wrapper">
         <!-- SIDEBAR -->
         <aside class="sidebar">
@@ -109,7 +80,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                  <span>Settings</span> </a>
                  </li>
 
-                
+
             </ul>
 
             <div class="sidebar-footer">
@@ -154,7 +125,3 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
 
                     </div> <!-- close navbar-right -->
                 </div> <!-- close top-navbar -->
-        </main> <!-- close main-content -->
-    </div> <!-- close wrapper -->
-</body>
-</html>

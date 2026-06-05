@@ -183,60 +183,79 @@
   }
 }
 
-
 /* ===== REELS SECTION ===== */
-.reelsSection{
-  padding: 70px 0 90px;
-  background: linear-gradient(180deg, #f7f1fc 0%, #ffffff 100%);
+.reelsSection {
+  padding: 80px 0;
+  background: linear-gradient(135deg, #f5f0ff 0%, #d7d2e2 25%, #b6abd2 50%, #8b80b0 75%, #7158a6 100%);
 }
 
-.reelsHead{
+.reelsSection .container {
+  width: 90%;
+  max-width: 1100px;
+  margin: 0 auto;
+  background: rgba(186,181,181,0.06);
+  backdrop-filter: blur(20px);
+  border-radius: 30px;
+  padding: 40px 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  box-sizing: border-box;
+}
+
+.reelsHead {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 40px;
 }
 
-.reelsHead h2{
+.reelsHead h2 {
+  font-size: clamp(24px, 3vw, 32px);
+  color: #4d1d76;
+  font-weight: 700;
   margin: 0 0 10px;
-  font-size: clamp(28px, 3vw, 42px);
-  font-weight: 900;
-  color: #2a1443;
 }
 
-.reelsHead p{
+.reelsHead p {
   max-width: 760px;
   margin: 0 auto;
   font-size: 15px;
   line-height: 1.8;
-  color: rgba(42,20,67,0.68);
+  color: rgba(77,29,118,0.7);
 }
 
-.reelsWrap{
+/* WRAP — holds arrows + viewport */
+.reelsWrap {
   position: relative;
-  max-width: 1120px;
-  margin: 0 auto;
-}
-
-.reelsViewport{
-  overflow: hidden;
-  padding: 10px 70px;
-}
-
-.reelsTrack{
   display: flex;
   align-items: center;
-  transition: transform 0.65s ease;
-  will-change: transform;
+  gap: 0;
 }
 
-.reelSlide{
+/* VIEWPORT — clips the track */
+.reelsViewport {
+  flex: 1;
+  overflow: hidden;
+  min-width: 0;  /* critical flex fix */
+}
+
+/* TRACK — slides sit in a row */
+.reelsTrack {
+  display: flex;
+  flex-wrap: nowrap;     /* Forces all reels to stay on one single horizontal row */
+  width: max-content;    /* Allows the slider track to expand infinitely horizontally */
+}
+
+/* SLIDE */
+.reelSlide {
   flex: 0 0 33.3333%;
+  min-width: 0;
   display: flex;
   justify-content: center;
   padding: 10px 8px;
+  box-sizing: border-box;
   transition: transform 0.45s ease, opacity 0.45s ease;
 }
 
-.reelCard{
+/* CARD — 9:16 ratio, no hardcoded min-height */
+.reelCard {
   width: 100%;
   max-width: 260px;
   aspect-ratio: 9 / 16;
@@ -246,151 +265,194 @@
   box-shadow: 0 18px 42px rgba(42,20,67,0.12);
   border: 1px solid rgba(113,88,166,0.10);
   transition: transform 0.45s ease, box-shadow 0.45s ease, opacity 0.45s ease;
-  /* Fallback for aspect-ratio compatibility */
-  min-height: 462px; /* 260px * (16/9) */
 }
-
-.reelVideo{
+.reelVideo {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  background: #000;
 }
 
-/* center focus */
-.reelSlide.is-center .reelCard{
-  transform: scale(1.04);
-  box-shadow: 0 24px 56px rgba(42,20,67,0.18);
+/* FOCUS STATES */
+.reelSlide.is-center .reelCard {
+  transform: scale(1.05);
+  box-shadow: 0 24px 56px rgba(42,20,67,0.22);
 }
 
-.reelSlide.is-side .reelCard{
-  transform: scale(0.90);
-  opacity: 0.78;
+.reelSlide.is-side .reelCard {
+  transform: scale(0.88);
+  opacity: 0.65;
 }
 
-/* arrows */
-.reelBtn{
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 52px;
-  height: 52px;
+/* ARROWS */
+.reelBtn {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
   border: none;
-  border-radius: 16px;
+  border-radius: 12px;
   background: rgba(255,255,255,0.92);
   color: #2a1443;
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 900;
-  box-shadow: 0 14px 30px rgba(42,20,67,0.12);
+  line-height: 1;
+  box-shadow: 0 8px 20px rgba(42,20,67,0.15);
   cursor: pointer;
   z-index: 10;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.reelBtn:hover{
-  transform: translateY(-50%) scale(1.03);
+.reelBtn:hover {
+  transform: scale(1.06);
+  box-shadow: 0 12px 28px rgba(42,20,67,0.22);
 }
 
-.reelPrev{ left: 0; }
-.reelNext{ right: 0; }
-
-/* dots */
-.reelsDots{
+/* DOTS */
+.reelsDots {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-top: 20px;
 }
 
-.reelsDots .dot{
+.reelsDots .dot {
   width: 10px;
   height: 10px;
   border-radius: 999px;
-  background: rgba(113,88,166,0.28);
+  background: rgba(113,88,166,0.3);
   cursor: pointer;
   transition: all 0.25s ease;
   border: none;
+  padding: 0;
 }
 
-.reelsDots .dot.active{
+.reelsDots .dot.active {
   width: 28px;
   background: #7158a6;
 }
 
-/* ===== REELS SECTION PREMIUM BG ===== */
-.reelsSection {
-  padding: 80px 0;
-  background: linear-gradient(
-    135deg,
-    #f5f0ff 0%,
-    #d7d2e2 25%,
-    #b6abd2 50%,
-    #8b80b0 75%,
-    #7158a6 100%
-  );
-}
-
-/* Glass effect container */
-.reelsSection .container {
-  background: rgba(186, 181, 181, 0.06);
-  backdrop-filter: blur(20px);
-  border-radius: 30px;
-  padding: 40px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
-}
-
-/* Heading center + premium */
-.reelsHead {
+/* INSTAGRAM BUTTON */
+.reelsInstagram {
   text-align: center;
-  margin-bottom: 40px;
+  margin-top: 28px;
 }
 
-.reelsHead h2 {
-  font-size: 32px;
-  color: #4d1d76;
+.instaBtn {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: 999px;
+  background: #7158a6;
+  color: #fff;
   font-weight: 700;
-}
-
-.reelsHead p {
-  color: rgba(77, 33, 114, 0.7);
+  text-decoration: none;
   font-size: 15px;
+  box-shadow: 0 10px 25px rgba(59,34,113,0.3);
+  transition: 0.3s ease;
 }
 
-/* responsive */
-@media (max-width: 980px){
-  .reelsViewport{
-    padding: 10px 56px;
-  }
+.instaBtn:hover {
+  transform: translateY(-2px);
+  background: #5a3d8a;
+}
 
-  .reelSlide{
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .reelSlide {
     flex: 0 0 50%;
   }
+
+  .reelCard {
+    max-width: 280px;
+  }
+
+  .reelsSection .container {
+    padding: 35px 16px;
+  }
 }
 
-@media (max-width: 640px){
-  .reelsViewport{
-    padding: 10px 18px;
+@media (max-width: 640px) {
+  .reelsSection .container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 30px 12px;
+    border-radius: 0;
+    overflow: hidden;
   }
 
-  .reelSlide{
+  .reelsViewport {
+    padding: 100%;
+    overflow-x: hidden;
+    overflow-y: visible;
+  }
+
+  .reelSlide {
     flex: 0 0 100%;
+    padding: 10px 0;
+    display: flex;
+    justify-content: center;
   }
 
-  .reelSlide.is-side .reelCard,
-  .reelSlide.is-center .reelCard{
-    transform: scale(1);
-    opacity: 1;
+  .reelCard {
+    max-width: 75vw;
+    min-width: 200px;
   }
 
-  .reelBtn{
-    width: 44px;
-    height: 44px;
+ .reelsWrap {
+    position: relative;
+    display: block; /* Turns off flex properties squeezing the viewport */
+  }
+  
+  .reelBtn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 15;
+  }
+
+  .reelsHead h2 {
     font-size: 24px;
   }
 
-  .reelPrev{ left: -4px; }
-  .reelNext{ right: -4px; }
+  .reelsHead p {
+    font-size: 13px;
+  }
 }
+
+@media (max-width: 480px) {
+  .reelsSection .container {
+    padding: 25px 8px;
+  }
+
+  .reelCard {
+    max-width: 80vw;
+    min-width: 180px;
+  }
+
+  .reelBtn {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .reelsHead h2 {
+    font-size: 20px;
+  }
+
+  .reelsHead p {
+    font-size: 12px;
+  }
+
+  .reelsDots .dot {
+    width: 8px;
+    height: 8px;
+  }
+
+  .reelsDots .dot.active {
+    width: 24px;
+  }
+}
+
 
 /* ===== INSTAGRAM BUTTON ===== */
 .reelsInstagram {
@@ -600,10 +662,13 @@ html, body {
 }
 
 /* 4. TRACK FIX (MAIN ISSUE SOLVED HERE) */
-.stackTrack,
-.reelsTrack {
+.stackTrack{
   display: flex;
   width: max-content;   /*  THIS FIXES OVERFLOW */
+}
+
+.reelsTrack {
+  display: flex;
 }
 
 /* 5. SLIDES */

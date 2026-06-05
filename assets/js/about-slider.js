@@ -85,3 +85,110 @@ function scrollRight(){
     behavior: "smooth"
   });
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  const track = document.getElementById("reelsTrack");
+  const slides = Array.from(document.querySelectorAll(".reelSlide"));
+  const prevBtn = document.querySelector(".reelPrev");
+  const nextBtn = document.querySelector(".reelNext");
+  const dotsWrap = document.getElementById("reelsDots");
+  const videos = Array.from(document.querySelectorAll(".reelVideo"));
+
+  if (!track || !slides.length || !prevBtn || !nextBtn || !dotsWrap) return;
+
+  let currentIndex = 0;
+
+  function getVisibleCount() {
+    if (window.innerWidth <= 640) return 1;
+    if (window.innerWidth <= 980) return 2;
+    return 3;
+  }
+
+  function buildDots() {
+    dotsWrap.innerHTML = "";
+    slides.forEach((_, i) => {
+      const dot = document.createElement("button");
+      dot.className = "dot";
+      dot.type = "button";
+      dot.addEventListener("click", () => {
+        currentIndex = i;
+        updateSlider();
+      });
+      dotsWrap.appendChild(dot);
+    });
+  }
+
+  function pauseAllVideos(exceptIndex = null) {
+    videos.forEach((video, i) => {
+      if (i !== exceptIndex) {
+        video.pause();
+      }
+    });
+  }
+
+  function updateSlider() {
+    const visibleCount = getVisibleCount();
+    const slideWidth = 100 / visibleCount;
+
+    slides.forEach(slide => {
+      slide.classList.remove("is-center", "is-side");
+      slide.style.flex = `0 0 ${slideWidth}%`;
+    });
+
+    const offset = currentIndex * slideWidth;
+    track.style.transform = `translateX(-${offset}%)`;
+
+    const dots = dotsWrap.querySelectorAll(".dot");
+    dots.forEach(dot => dot.classList.remove("active"));
+    if (dots[currentIndex]) dots[currentIndex].classList.add("active");
+
+    if (visibleCount === 3) {
+      slides.forEach((slide, i) => {
+        if (i === currentIndex) {
+          slide.classList.add("is-center");
+        } else if (
+          i === (currentIndex - 1 + slides.length) % slides.length ||
+          i === (currentIndex + 1) % slides.length
+        ) {
+          slide.classList.add("is-side");
+        }
+      });
+    }
+
+    if (visibleCount === 2) {
+      slides.forEach((slide, i) => {
+        if (i === currentIndex || i === (currentIndex + 1) % slides.length) {
+          slide.classList.add("is-side");
+        }
+      });
+    }
+  }
+
+  nextBtn.addEventListener("click", () => {
+    pauseAllVideos();
+    if (currentIndex < slides.length - 1) {
+      currentIndex++;
+      updateSlider();
+    }
+  });
+
+  prevBtn.addEventListener("click", () => {
+    pauseAllVideos();
+    if (currentIndex > 0) {
+      currentIndex--;
+      updateSlider();
+    }
+  });
+
+  videos.forEach((video, index) => {
+    video.addEventListener("play", () => {
+      pauseAllVideos(index);
+    });
+  });
+
+  window.addEventListener("resize", updateSlider);
+
+  buildDots();
+  updateSlider();
+});
+

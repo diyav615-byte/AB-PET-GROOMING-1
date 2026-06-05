@@ -1,6 +1,9 @@
-<?php include "../config/db.php"; ?>
-
 <?php
+include "../config/db.php";
+
+$page_title = 'Add Service';
+require_once 'includes/header.php';
+
 if($_POST){
   $title=$_POST['title'];
   $price=$_POST['price'];
@@ -11,21 +14,34 @@ if($_POST){
   VALUES ('$title','$price','$desc','$cat')");
 
   header("Location: services.php");
+  exit;
 }
 ?>
 
-<form method="POST">
+<div class="card admin-card">
+  <form method="POST" class="admin-form">
 
-<input name="title" placeholder="Service Title" required><br><br>
-<input name="price" placeholder="Price"><br><br>
+    <h2 class="form-title">Add Service</h2>
 
-<select name="category">
-<option value="Grooming">Grooming</option>
-<option value="Boarding">Boarding</option>
-</select><br><br>
+    <label>Service Title</label>
+    <input name="title" placeholder="Service Title" required>
 
-<textarea name="description" placeholder="Description"></textarea><br><br>
+    <label>Price</label>
+    <input name="price" placeholder="Price">
 
-<button>Add Service</button>
+    <label>Category</label>
+    <select name="category">
+      <option value="Grooming">Grooming</option>
+      <option value="Boarding">Boarding</option>
+    </select>
 
-</form>
+    <label>Description</label>
+    <textarea name="description" placeholder="Description"></textarea>
+
+    <br>
+    <button type="submit" class="btn btn-primary">Add Service</button>
+
+  </form>
+</div>
+
+<?php require_once 'includes/footer.php'; ?>

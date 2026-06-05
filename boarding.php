@@ -774,11 +774,6 @@ include "includes/header.php";
             Safe, loving and hygienic boarding for dogs and cats with comfort-first care, personal attention and daily support.
           </p>
 
-          <div class="hero-badges">
-            <span class="hero-badge">Comfort First</span>
-            <span class="hero-badge">Daily Updates</span>
-          </div>
-
           <div class="hero-actions">
             <a href="#boardingForm" class="board-btn board-btn-primary">Book Boarding</a>
             <a href="https://wa.me/918828719786" target="_blank" class="board-btn board-btn-secondary">WhatsApp Us</a>

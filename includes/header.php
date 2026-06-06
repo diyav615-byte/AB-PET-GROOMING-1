@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AB Pet Grooming</title>
+  <title>A B Pet Grooming Store</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -15,8 +15,8 @@
   <div class="container nav-inner">
      
     <a class="brand" href="index.php">
-      <img src="assets/images/logo.png" alt="AB Pet Grooming Logo" class="logo">
-      <span>AB Pet Grooming Store</span>
+      <img src="assets/images/logo.png" alt="A B Pet Grooming Logo" class="logo">
+      <span>A B Pet Grooming Store</span>
     </a>
 
     <nav class="nav">

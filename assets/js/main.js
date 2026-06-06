@@ -100,7 +100,7 @@
           heroImage.src = s.image;
           heroImage.classList.remove("fade-out");
           heroImage.classList.add("fade-in");
-        }, animate ? 450 : 0);
+        }, animate ? 400 : 0);
       }
 
       applySlide(current, false);
@@ -108,7 +108,7 @@
       setInterval(() => {
         current = (current + 1) % slides.length;
         applySlide(current, true);
-      }, 1000);
+      }, 4000);
     }
 
   });

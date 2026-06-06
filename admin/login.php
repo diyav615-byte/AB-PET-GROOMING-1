@@ -1,4 +1,16 @@
 <?php
+// 12 hours in seconds = 12 * 60 * 60 = 43200
+$session_lifetime = 43200;
+
+// Set the session cookie and garbage collector lifetime BEFORE starting the session
+ini_set('session.gc_maxlifetime', $session_lifetime);
+session_set_cookie_params([
+    'lifetime' => $session_lifetime,
+    'path' => '/',
+    'secure' => isset($_SERVER['HTTPS']), // True if using HTTPS
+    'httponly' => true,                   // Protects against XSS
+    'samesite' => 'Lax'
+]);
 
 session_start();
 
@@ -13,9 +25,6 @@ if (isset($_SESSION['admin_id'])) {
     exit;
 }
 
-$error = '';
-$success = '';
-
 // Check for timeout message
 if (isset($_GET['timeout'])) {
     $error = 'Session expired. Please login again.';
@@ -29,37 +38,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (empty($username) || empty($password)) {
         $error = 'Please enter both username and password.';
     } else {
+        // Prevent SQL Injection using mysqli_real_escape_string
+        $username = mysqli_real_escape_string($conn, $username);
+        $password = mysqli_real_escape_string($conn, $password);
         
-      $query = mysqli_query( $conn,
-    "SELECT * FROM admin_users 
-     WHERE username='$username' 
-     AND password='$password'"
-);
+        $query = mysqli_query($conn, "SELECT * FROM admin_users WHERE username='$username' AND password='$password'");
 
-if(mysqli_num_rows($query) > 0){
+        if (mysqli_num_rows($query) > 0) {
+            $admin = mysqli_fetch_assoc($query);
 
-    $admin = mysqli_fetch_assoc($query);
+            $_SESSION['admin_id'] = $admin['id'];
+            $_SESSION['admin_username'] = $admin['username'];
+            
+            // Set the current time as the baseline for the 12-hour window
+            $_SESSION['last_activity'] = time(); 
 
-    $_SESSION['admin_id'] = $admin['id'];
-    $_SESSION['admin_username'] = $admin['username'];
-    $_SESSION['admin_password'] = $admin['password'];
-    $_SESSION['last_activity'] = time();
-
-    header("Location: dashboard.php");
-    exit;
-
-}else{
-    $error = "Invalid username or password.";
-}
+            header("Location: dashboard.php");
+            exit;
+        } else {
+            $error = "Invalid username or password.";
+        }
     }
 }
+?>
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - Pet Grooming</title>
+    <title>Admin Login - A B Pet Grooming Store </title>
     <link rel="stylesheet" href="css/style.css">
     <style>
         body {

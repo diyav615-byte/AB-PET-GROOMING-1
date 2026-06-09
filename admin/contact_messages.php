@@ -1,10 +1,15 @@
 <?php
+require_once '../includes/bootstrap.php';
+
 ob_start();
 include '../config/db.php';
 
 if (isset($_GET['delete'])) {
     $id = (int)$_GET['delete'];
-    mysqli_query($conn, "DELETE FROM contact_messages WHERE id = $id");
+    $stmt = mysqli_prepare($conn, "DELETE FROM contact_messages WHERE id = ?");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
     $_SESSION['toast'] = ['message' => 'Message deleted!', 'type' => 'success'];
     header('Location: contact_messages.php');
     exit;

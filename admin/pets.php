@@ -1,4 +1,6 @@
 <?php
+require_once '../includes/bootstrap.php';
+
 $page_title = "Manage Pets";
 $css_path = "css/style.css";
 require_once 'includes/header.php';
@@ -30,6 +32,7 @@ $pets = [
             <button class="modal-close" onclick="closeModal('addPetModal')">&times;</button>
         </div>
         <form method="POST" onsubmit="return handlePetSubmit(event)">
+            <?php echo csrf_field(); ?>
             <div class="form-row">
                 <div class="form-group">
                     <label for="petCustomerId">Customer ID *</label>

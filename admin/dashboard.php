@@ -1,15 +1,30 @@
 <?php
+require_once '../includes/bootstrap.php';
+
 $page_title = "Dashboard";
 require_once 'includes/header.php';
-
 include '../config/db.php';
 
+// ... rest of your dashboard code remains the same ...
+// Helper function to get count with prepared statement
+function getCount($conn, $sql, $types = '', ...$params) {
+    $stmt = mysqli_prepare($conn, $sql);
+    if ($params) {
+        mysqli_stmt_bind_param($stmt, $types, ...$params);
+    }
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $row = mysqli_fetch_assoc($result);
+    mysqli_stmt_close($stmt);
+    return $row['cnt'] ?? 0;
+}
+
 // Get stats from appointments table
-$total_appointments = mysqli_num_rows(mysqli_query($conn, "SELECT id FROM appointments"));
+$total_appointments = getCount($conn, "SELECT COUNT(*) as cnt FROM appointments");
 $today = date('Y-m-d');
-$today_appointments = mysqli_num_rows(mysqli_query($conn, "SELECT id FROM appointments WHERE appointment_date = '$today'"));
-$upcoming = mysqli_num_rows(mysqli_query($conn, "SELECT id FROM appointments WHERE appointment_date >= '$today'"));
-$total_customers = mysqli_num_rows(mysqli_query($conn, "SELECT DISTINCT phone FROM appointments"));
+$today_appointments = getCount($conn, "SELECT COUNT(*) as cnt FROM appointments WHERE appointment_date = ?", "s", $today);
+$upcoming = getCount($conn, "SELECT COUNT(*) as cnt FROM appointments WHERE appointment_date >= ?", "s", $today);
+$total_customers = getCount($conn, "SELECT COUNT(DISTINCT phone) as cnt FROM appointments");
 
 // Get recent appointments
 $recent = mysqli_query($conn, "SELECT * FROM appointments ORDER BY id ASC LIMIT 5");
@@ -20,7 +35,7 @@ $daily_counts = [];
 for ($i = 6; $i >= 0; $i--) {
     $date = date('Y-m-d', strtotime("-$i days"));
     $day = date('D', strtotime($date));
-    $count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as cnt FROM appointments WHERE appointment_date = '$date'"))['cnt'];
+    $count = getCount($conn, "SELECT COUNT(*) as cnt FROM appointments WHERE appointment_date = ?", "s", $date);
     $daily_labels[] = $day;
     $daily_counts[] = $count;
 }
@@ -31,7 +46,7 @@ $weekly_counts = [];
 for ($i = 3; $i >= 0; $i--) {
     $week_start = date('Y-m-d', strtotime("-" . ($i * 7 + 7) . " days"));
     $week_end = date('Y-m-d', strtotime("-" . ($i * 7) . " days"));
-    $count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as cnt FROM appointments WHERE appointment_date BETWEEN '$week_start' AND '$week_end'"))['cnt'];
+    $count = getCount($conn, "SELECT COUNT(*) as cnt FROM appointments WHERE appointment_date BETWEEN ? AND ?", "ss", $week_start, $week_end);
     $weekly_labels[] = "Week " . (4 - $i);
     $weekly_counts[] = $count;
 }
@@ -42,7 +57,7 @@ $monthly_counts = [];
 for ($i = 5; $i >= 0; $i--) {
     $month = date('M', strtotime("-$i months"));
     $year_month = date('Y-m', strtotime("-$i months"));
-    $count = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as cnt FROM appointments WHERE appointment_date LIKE '$year_month%'"))['cnt'];
+    $count = getCount($conn, "SELECT COUNT(*) as cnt FROM appointments WHERE appointment_date LIKE ?", "s", $year_month . '%');
     $monthly_labels[] = $month;
     $monthly_counts[] = $count;
 }
@@ -221,8 +236,17 @@ for ($i = 5; $i >= 0; $i--) {
                         <tr>
                             <td><strong>#<?php echo $row['id']; ?></strong></td>
                             <td>
-                                <div style="font-weight: 500;"><?php echo htmlspecialchars($row['owner_name']); ?></div>
-                                <div style="font-size: 11px; color: var(--text-muted);"><?php echo htmlspecialchars($row['phone']); ?></div>
+                                <div>
+                                    <?php 
+                                    $apptDate = $row['appointment_date'];
+                                    if (!empty($apptDate) && $apptDate !== '0000-00-00') {
+                                        echo date('M d, Y', strtotime($apptDate));
+                                    } else {
+                                        echo '<span style="color: var(--text-muted);">Invalid Date</span>';
+                                    }
+                                    ?>
+                                </div>
+                                <div style="font-size: 11px; color: var(--text-muted);"><?php echo $row['appointment_time']; ?></div>
                             </td>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -245,14 +269,30 @@ for ($i = 5; $i >= 0; $i--) {
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <div><?php echo date('M d, Y', strtotime($row['appointment_date'])); ?></div>
+                                <div>
+                                    <?php 
+                                    $apptDate = $row['appointment_date'];
+                                    if (!empty($apptDate) && $apptDate !== '0000-00-00') {
+                                        echo date('M d, Y', strtotime($apptDate));
+                                    } else {
+                                        echo '<span style="color: var(--text-muted);">Invalid Date</span>';
+                                    }
+                                    ?>
+                                </div>
                                 <div style="font-size: 11px; color: var(--text-muted);"><?php echo $row['appointment_time']; ?></div>
                             </td>
                             <td>
-                                <?php if($row['appointment_date'] >= $today): ?>
-                                <span class="status-badge status-info">Upcoming</span>
+                                <?php
+                                $apptDate = $row['appointment_date'];
+                                $isValidDate = !empty($apptDate) && $apptDate !== '0000-00-00';
+                                $isUpcoming = $isValidDate && $apptDate >= $today;
+                                ?>
+                                <?php if($isValidDate && $isUpcoming): ?>
+                                    <span class="status-badge status-info">Upcoming</span>
+                                <?php elseif($isValidDate): ?>
+                                    <span class="status-badge status-success">Completed</span>
                                 <?php else: ?>
-                                <span class="status-badge status-success">Completed</span>
+                                    <span class="status-badge status-warning">Invalid Date</span>
                                 <?php endif; ?>
                             </td>
                         </tr>

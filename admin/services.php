@@ -1,10 +1,14 @@
 <?php
+require_once '../includes/bootstrap.php';
 include '../config/db.php';
 
 // DELETE
 if(isset($_GET['delete'])){
     $id = (int)$_GET['delete'];
-    mysqli_query($conn, "DELETE FROM service_cards WHERE id=$id");
+    $stmt = mysqli_prepare($conn, "DELETE FROM service_cards WHERE id=?");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
     header("Location: services.php");
     exit;
 }
@@ -16,54 +20,73 @@ $editItems = null;
 if(isset($_GET['edit'])){
     $id = (int)$_GET['edit'];
 
-    $editData = mysqli_fetch_assoc(
-        mysqli_query($conn,"SELECT * FROM service_cards WHERE id=$id")
-    );
+    $stmt = mysqli_prepare($conn, "SELECT * FROM service_cards WHERE id=?");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $editData = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+    mysqli_stmt_close($stmt);
 
-    $editItems = mysqli_query($conn,
-        "SELECT * FROM service_card_items WHERE service_id=$id"
-    );
+    $stmt = mysqli_prepare($conn, "SELECT * FROM service_card_items WHERE service_id=?");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $editItems = mysqli_stmt_get_result($stmt);
 }
 
 // ADD
 if(isset($_POST['add_service'])){
-    $title = mysqli_real_escape_string($conn, $_POST['title']);
-    $category =  mysqli_real_escape_string($conn, $_POST['category']);
-    mysqli_query($conn,"INSERT INTO service_cards (title,category) 
-    VALUES ('$title','$category')");
-
+    // Verify CSRF token (without regenerating on failure)
+    if (!CsrfProtection::verifyFromPostNoRegen($_POST)) {
+        die('Invalid CSRF token');
+    }
+    
+    $title = trim($_POST['title']);
+    $category = trim($_POST['category']);
+    
+    $stmt = mysqli_prepare($conn, "INSERT INTO service_cards (title, category) VALUES (?, ?)");
+    mysqli_stmt_bind_param($stmt, "ss", $title, $category);
+    mysqli_stmt_execute($stmt);
     $service_id = mysqli_insert_id($conn);
+    mysqli_stmt_close($stmt);
 
     saveItems($conn, $service_id);
 }
 
 // UPDATE
 if(isset($_POST['update_service'])){
+    // Verify CSRF token (without regenerating on failure)
+    if (!CsrfProtection::verifyFromPostNoRegen($_POST)) {
+        die('Invalid CSRF token');
+    }
+    
     $id = (int)$_GET['edit'];
+    $title = trim($_POST['title']);
+    $category = trim($_POST['category']);
 
-    $title = mysqli_real_escape_string($conn, $_POST['title']);
-    $category =  mysqli_real_escape_string($conn, $_POST['category']);
+    $stmt = mysqli_prepare($conn, "UPDATE service_cards SET title=?, category=? WHERE id=?");
+    mysqli_stmt_bind_param($stmt, "ssi", $title, $category, $id);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
 
-    mysqli_query($conn,"UPDATE service_cards 
-    SET title='$title', category='$category' WHERE id=$id");
-
-    mysqli_query($conn,"DELETE FROM service_card_items WHERE service_id=$id");
+    $stmt = mysqli_prepare($conn, "DELETE FROM service_card_items WHERE service_id=?");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
 
     saveItems($conn, $id);
 }
 
 // FUNCTION
 function saveItems($conn, $service_id){
-
     // ITEMS
     if(isset($_POST['item_name'])){
         foreach($_POST['item_name'] as $key => $name){
             $price = $_POST['item_price'][$key] ?: NULL;
 
             if($name != ''){
-                mysqli_query($conn,"INSERT INTO service_card_items 
-                (service_id,type,name,price)
-                VALUES ('$service_id','item','$name',".($price ? "'$price'" : "NULL").")");
+                $stmt = mysqli_prepare($conn, "INSERT INTO service_card_items (service_id, type, name, price) VALUES (?, 'item', ?, ?)");
+                mysqli_stmt_bind_param($stmt, "isd", $service_id, $name, $price);
+                mysqli_stmt_execute($stmt);
+                mysqli_stmt_close($stmt);
             }
         }
     }
@@ -74,9 +97,10 @@ function saveItems($conn, $service_id){
             $price = $_POST['breed_price'][$key] ?: NULL;
 
             if($name != ''){
-                mysqli_query($conn,"INSERT INTO service_card_items 
-                (service_id,type,name,price)
-                VALUES ('$service_id','breed','$name',".($price ? "'$price'" : "NULL").")");
+                $stmt = mysqli_prepare($conn, "INSERT INTO service_card_items (service_id, type, name, price) VALUES (?, 'breed', ?, ?)");
+                mysqli_stmt_bind_param($stmt, "isd", $service_id, $name, $price);
+                mysqli_stmt_execute($stmt);
+                mysqli_stmt_close($stmt);
             }
         }
     }
@@ -86,7 +110,7 @@ function saveItems($conn, $service_id){
 }
 
 // FETCH
-$services = mysqli_query($conn,"SELECT * FROM service_cards ORDER BY id ASC");
+$services = mysqli_query($conn, "SELECT * FROM service_cards ORDER BY id ASC");
 
 $page_title = "Services";
 require_once 'includes/header.php';
@@ -96,6 +120,7 @@ require_once 'includes/header.php';
 <div class="card admin-card">
 
 <form method="POST" class="admin-form">
+    <?php echo csrf_field(); ?>
 
 <h2 class="form-title">Manage Services</h2>
 

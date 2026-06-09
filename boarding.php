@@ -930,6 +930,7 @@ while($cat = mysqli_fetch_assoc($catPricing)):
         </div>
 
         <form id="boardingForm" class="boarding-form" method="POST" action="submit_boarding.php">
+            <?php echo csrf_field(); ?>
 
           <div class="form-block">
             <h3>Owner Details</h3>

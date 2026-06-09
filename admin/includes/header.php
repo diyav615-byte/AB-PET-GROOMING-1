@@ -1,11 +1,13 @@
 <?php
-session_start();
 require_once dirname(__DIR__) . '/auth_check.php';
+require_once dirname(__DIR__) . '/../includes/CsrfProtection.php';
+require_once dirname(__DIR__) . '/../includes/SecurityHeaders.php';
 
+// Set security headers for admin pages
+SecurityHeaders::setHeaders(true);
 
 $current_page = basename($_SERVER['PHP_SELF'], '.php');
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,6 +18,8 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <!-- CSRF token for AJAX requests -->
+    <meta name="csrf-token" content="<?php echo CsrfProtection::getTokenValue(); ?>">
 </head>
 <body class="admin-page">
     <div class="wrapper">
@@ -24,7 +28,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
             <div class="sidebar-header">
                 <div class="sidebar-logo">
                     <div class="logo-box"><img src="../assets/images/logo.png" alt="Logo"></div>
-                    <span class="sidebar-logo-text">AB Pet Grooming</span>
+                    <span class="sidebar-logo-text">A B Pet Grooming</span>
                 </div>
                 <button class="sidebar-close-btn" aria-label="Close sidebar">
                     <i class="fas fa-times"></i>
@@ -91,6 +95,7 @@ $current_page = basename($_SERVER['PHP_SELF'], '.php');
                     </div>
                 </div>
                 <form method="POST" action="logout.php" style="margin: 0;">
+                    <?php echo csrf_field(); ?>
                     <button type="submit" class="logout-btn">
                         <i class="fas fa-sign-out-alt"></i>
                         <span>Logout</span>

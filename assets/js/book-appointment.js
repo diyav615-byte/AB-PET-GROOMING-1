@@ -107,25 +107,27 @@ const timeInput = document.querySelector("[name='appointment_time']");
 
 if (timeInput) {
   timeInput.addEventListener("change", function () {
-    // If the input is empty or incomplete, do nothing
     if (!this.value) return; 
 
-    // Split "10:30" into hours (10) and minutes (30)
     const timeParts = this.value.split(":");
     const hours = parseInt(timeParts[0], 10);
     const minutes = parseInt(timeParts[1], 10);
 
-    // Convert everything to total minutes from midnight
     const selectedTotalMinutes = hours * 60 + minutes;
+    const minAllowedMinutes = 10 * 60 + 30; // 10:30 AM = 630
+    const maxAllowedMinutes = 18 * 60 + 30; // 6:30 PM = 1110
 
-    // Strict boundaries:
-    const minAllowedMinutes = 10 * 60 + 30; // 10:30 AM = 630 minutes
-    const maxAllowedMinutes = 18 * 60 + 30; //  6:30 PM = 1110 minutes
-
-    // Validation check
+    // Check boundaries
     if (selectedTotalMinutes < minAllowedMinutes || selectedTotalMinutes > maxAllowedMinutes) {
       alert("Please select an appointment time between 10:30 AM and 6:30 PM.");
-      this.value = ""; // Clear the invalid selection
+      this.value = "";
+      return;
+    }
+
+    // Check 30-minute interval (must be exactly :00 or :30)
+    if (minutes !== 0 && minutes !== 30) {
+      alert("Appointments are available only at 30-minute intervals (e.g., 10:30, 11:00, 11:30).");
+      this.value = "";
     }
   });
 }

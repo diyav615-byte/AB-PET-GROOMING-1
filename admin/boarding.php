@@ -1,11 +1,11 @@
 <?php
+require_once '../includes/bootstrap.php';
+include '../config/db.php';
+
 $page_title = "Boarding";
 require_once 'includes/header.php';
 
-include '../config/db.php';
-
 $boarding = mysqli_query($conn, "SELECT * FROM boarding ORDER BY id ASC");
-
 $status_options = ['active', 'completed', 'cancelled'];
 ?>
 
@@ -31,6 +31,7 @@ $status_options = ['active', 'completed', 'cancelled'];
                     placeholder="Search by owner, phone, pet name..."
                 >
             </div>
+           
 
             <!-- STATUS FILTER -->
             <select id="statusFilter" class="filter-select">
@@ -63,6 +64,7 @@ $status_options = ['active', 'completed', 'cancelled'];
 
     </div>
 </div>
+
 
 <!-- BOARDING TABLE -->
 <div class="card">

@@ -1,3 +1,8 @@
+<?php
+session_start();
+include 'includes/header.php';
+require_once 'includes/CsrfProtection.php';
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,6 +14,7 @@
 <h2>Share Your Experience</h2>
 
 <form action="submit_review.php" method="POST" onsubmit="return validateReview()">
+    <?php echo csrf_field(); ?>
 
 <input type="text" id="rname" name="name" placeholder="Your Name" required><br><br>
 

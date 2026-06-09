@@ -326,7 +326,7 @@ body, .services-page{
   <section class="svc-hero">
     <div class="container svc-hero-inner">
       <h1>Our Grooming Services</h1>
-      <p>Premium care for your furry family members — because they deserve the best.</p>
+      <p>Premium care for your furry family members - because they deserve the best.</p>
     </div>
   </section>
 

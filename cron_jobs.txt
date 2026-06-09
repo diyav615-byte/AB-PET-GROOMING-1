@@ -1,0 +1,44 @@
+# =====================================================
+# CRON JOBS FOR AB PET GROOMING
+# Run on your PRODUCTION SERVER: crontab -e
+# =====================================================
+
+# =====================================================
+# DAILY DATABASE BACKUP (2:00 AM daily)
+# =====================================================
+0 2 * * * /home/backup/backup_db.sh >> /var/log/db_backup.log 2>&1
+
+# =====================================================
+# CLEAN OLD PHP SESSION FILES (daily at 3 AM)
+# =====================================================
+0 3 * * * find /var/lib/php/sessions -name "sess_*" -mtime +1 -delete
+
+# =====================================================
+# CLEAN OLD LOG FILES (weekly on Sunday at 4 AM)
+# =====================================================
+0 4 * * 0 find /var/log -name "*.log" -mtime +30 -delete
+
+# =====================================================
+# OPTIONAL: CLEAR OLD PHP SESSION FILES IN PROJECT (daily at 4:30 AM)
+# =====================================================
+30 4 * * * find /var/www/AB-PET-GROOMING-1\ -\ Copy/var/sessions -name "sess_*" -mtime +1 -delete 2>/dev/null
+
+# =====================================================
+# OPTIONAL: RESTART APACHE WEEKLY (Sunday 5 AM) - prevents memory leaks
+# =====================================================
+# 0 5 * * 0 systemctl reload apache2
+
+# =====================================================
+# OPTIONAL: CERTBOT RENEWAL CHECK (twice daily)
+# =====================================================
+# 0 */12 * * * certbot renew --quiet --post-hook "systemctl reload apache2"
+
+# =====================================================
+# HOW TO INSTALL:
+# =====================================================
+# 1. SSH to your server
+# 2. Run: crontab -e
+# 3. Paste the lines above (without the # comments if you want)
+# 4. Save and exit
+# 
+# Verify: crontab -l

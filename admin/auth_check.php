@@ -5,9 +5,9 @@ if (!isset($_SESSION['admin_id'])) {
     exit;
 }
 
-// Check session timeout (Changed to 43200 seconds for a 12-hour timeout)
+// Check session timeout (1 hour = 3600 seconds)
 if (isset($_SESSION['last_activity'])) {
-    if (time() - $_SESSION['last_activity'] > 43200) { 
+    if (time() - $_SESSION['last_activity'] > 3600) { 
         session_unset(); // Clear session variables safely
         session_destroy(); // Destroy the session completely
         header("Location: login.php?timeout=1");
@@ -15,6 +15,6 @@ if (isset($_SESSION['last_activity'])) {
     }
 }
 
-// Refresh the activity timestamp so the 12-hour window resets on every page interaction
+// Refresh the activity timestamp so the window resets on every page interaction
 $_SESSION['last_activity'] = time();
 ?>

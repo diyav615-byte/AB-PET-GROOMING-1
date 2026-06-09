@@ -19,7 +19,7 @@
       </p>
 
       <div class="hero-actions">
-        <a class="btn-pill btn-solid" id="heroBookBtn" href="booking.php">Book Appointment</a>
+        <a class="btn-pill btn-solid" id="heroBookBtn" href="book-appointment.php">Book Appointment</a>
         <a class="btn-pill btn-ghost" href="tel:+918828719786">Call Now</a>
       </div>
     </div>
@@ -74,7 +74,7 @@
         
 Abrar Shaikh, Founder of AB Pet Grooming, is a nationally recognized and internationally certified pet grooming expert with multiple championship titles to his name. From winning Best in Show at prestigious international competitions to proudly representing India on global grooming platforms, his journey reflects passion, precision, and unwavering dedication.
 
-With years of professional experience and advanced training under renowned global mentors, Abrar has set new benchmarks in modern pet grooming standards. His vision for AB Pet Grooming is clear — to provide world-class care, ethical grooming practices, and a calm, stress-free experience for every pet that walks through the door.
+With years of professional experience and advanced training under renowned global mentors, Abrar has set new benchmarks in modern pet grooming standards. His vision for AB Pet Grooming is clear - to provide world-class care, ethical grooming practices, and a calm, stress-free experience for every pet that walks through the door.
 </p>
     </div>
 

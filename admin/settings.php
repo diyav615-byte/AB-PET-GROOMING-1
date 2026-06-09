@@ -29,6 +29,7 @@ require_once 'includes/header.php';
         <h2>Change Username</h2>
 
         <form method="POST" action="update_username.php">
+            <?php echo csrf_field(); ?>
 
             <div class="form-group">
                 <label>Username</label>
@@ -57,6 +58,7 @@ require_once 'includes/header.php';
         <h2>Change Password</h2>
 
         <form method="POST" action="update_password.php">
+            <?php echo csrf_field(); ?>
 
             <div class="form-group">
                 <label>Old Password</label>

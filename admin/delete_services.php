@@ -1,9 +1,17 @@
 <?php
-include "../config/db.php";
+require_once '../includes/bootstrap.php';
 
-$id=$_GET['id'];
+$page_title = "Delete Service";
+require_once 'includes/header.php';
 
-mysqli_query($conn,"DELETE FROM services WHERE id=$id");
+include '../config/db.php';
+
+$id = (int)$_GET['id'];
+
+$stmt = mysqli_prepare($conn, "DELETE FROM services WHERE id=?");
+mysqli_stmt_bind_param($stmt, "i", $id);
+mysqli_stmt_execute($stmt);
+mysqli_stmt_close($stmt);
 
 header("Location: services.php");
-?>
+exit;

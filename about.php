@@ -9,7 +9,7 @@
     <div class="story-block">
       <h2>Our Story</h2>
       <p>
-        AB Pet Grooming is built with one goal — stress-free grooming.
+        AB Pet Grooming is built with one goal - stress-free grooming.
         Every pet deserves gentle care, hygiene, and a calm environment.
       </p>
     </div>
@@ -188,7 +188,7 @@
         </p>
 
         <h4 class="review-name">
-          — <?= $row['name'] ?>
+          ~ <?= $row['name'] ?>
         </h4>
       </div>
 

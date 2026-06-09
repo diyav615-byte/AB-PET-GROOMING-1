@@ -1,6 +1,25 @@
 (function () {
   "use strict";
 
+  // CSRF token helper
+  function getCsrfToken() {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    return meta ? meta.getAttribute('content') : '';
+  }
+
+  // Add CSRF token to fetch requests
+  const originalFetch = window.fetch;
+  window.fetch = function(url, options = {}) {
+    if (options.method && options.method.toUpperCase() !== 'GET') {
+      const headers = new Headers(options.headers || {});
+      if (!headers.has('X-CSRF-Token')) {
+        headers.set('X-CSRF-Token', getCsrfToken());
+      }
+      options.headers = headers;
+    }
+    return originalFetch(url, options);
+  };
+
   document.addEventListener('DOMContentLoaded', () => {
     
     // ==========================================

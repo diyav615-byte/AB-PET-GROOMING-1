@@ -1,6 +1,7 @@
 <?php
-ob_start();
+require_once '../includes/bootstrap.php';
 
+ob_start();
 
 include '../config/db.php';
 
@@ -11,11 +12,20 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     $action = $_GET['action'] ?? '';
 
     if ($action === 'approve') {
-        mysqli_query($conn, "UPDATE reviews SET status='approved' WHERE id=$id");
+        $stmt = mysqli_prepare($conn, "UPDATE reviews SET status='approved' WHERE id=?");
+        mysqli_stmt_bind_param($stmt, "i", $id);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
     } elseif ($action === 'reject') {
-        mysqli_query($conn, "UPDATE reviews SET status='rejected' WHERE id=$id");
+        $stmt = mysqli_prepare($conn, "UPDATE reviews SET status='rejected' WHERE id=?");
+        mysqli_stmt_bind_param($stmt, "i", $id);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
     } elseif ($action === 'delete') {
-        mysqli_query($conn, "DELETE FROM reviews WHERE id=$id");
+        $stmt = mysqli_prepare($conn, "DELETE FROM reviews WHERE id=?");
+        mysqli_stmt_bind_param($stmt, "i", $id);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
     }
 
     header("Location: reviews.php");

@@ -1,18 +1,23 @@
 <?php
+require_once '../includes/bootstrap.php';
 include '../config/db.php';
 
 /* ================= ADD ================= */
 
 if(isset($_POST['add_boarding'])){
+    // Verify CSRF token (no regen on failure)
+    if (!CsrfProtection::verifyFromPostNoRegen($_POST)) {
+        die('Invalid CSRF token');
+    }
+    
+    $name  = trim($_POST['name']);
+    $price = trim($_POST['price']);
+    $type  = trim($_POST['type']);
 
-    $name  = mysqli_real_escape_string($conn,$_POST['name']);
-    $price = mysqli_real_escape_string($conn,$_POST['price']);
-    $type  = mysqli_real_escape_string($conn,$_POST['type']);
-
-    mysqli_query($conn,"
-        INSERT INTO pet_boarding(name,price,type)
-        VALUES('$name','$price','$type')
-    ");
+    $stmt = mysqli_prepare($conn, "INSERT INTO pet_boarding(name,price,type) VALUES(?,?,?)");
+    mysqli_stmt_bind_param($stmt, "sss", $name, $price, $type);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
 
    echo "<script>window.location='add_boarding.php';</script>";
 exit;
@@ -22,21 +27,20 @@ exit;
 /* ================= UPDATE ================= */
 
 if(isset($_POST['update_boarding'])){
-
+    // Verify CSRF token (no regen on failure)
+    if (!CsrfProtection::verifyFromPostNoRegen($_POST)) {
+        die('Invalid CSRF token');
+    }
+    
     $id = (int)$_GET['edit'];
+    $name  = trim($_POST['name']);
+    $price = trim($_POST['price']);
+    $type  = trim($_POST['type']);
 
-    $name  = mysqli_real_escape_string($conn,$_POST['name']);
-    $price = mysqli_real_escape_string($conn,$_POST['price']);
-    $type  = mysqli_real_escape_string($conn,$_POST['type']);
-
-    mysqli_query($conn,"
-        UPDATE pet_boarding
-        SET
-        name='$name',
-        price='$price',
-        type='$type'
-        WHERE id=$id
-    ");
+    $stmt = mysqli_prepare($conn, "UPDATE pet_boarding SET name=?, price=?, type=? WHERE id=?");
+    mysqli_stmt_bind_param($stmt, "sssi", $name, $price, $type, $id);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
 
     header("Location: add_boarding.php");
     exit;
@@ -49,10 +53,10 @@ if(isset($_GET['delete'])){
 
     $id = (int)$_GET['delete'];
 
-    mysqli_query($conn,"
-        DELETE FROM pet_boarding
-        WHERE id=$id
-    ");
+    $stmt = mysqli_prepare($conn, "DELETE FROM pet_boarding WHERE id=?");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
 
     echo "<script>window.location='add_boarding.php';</script>";
     exit;
@@ -67,12 +71,11 @@ if(isset($_GET['edit'])){
 
     $id = (int)$_GET['edit'];
 
-    $editData = mysqli_fetch_assoc(
-        mysqli_query($conn,"
-            SELECT * FROM pet_boarding
-            WHERE id=$id
-        ")
-    );
+    $stmt = mysqli_prepare($conn, "SELECT * FROM pet_boarding WHERE id=?");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    $editData = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt));
+    mysqli_stmt_close($stmt);
 }
 
 
@@ -80,10 +83,7 @@ if(isset($_GET['edit'])){
 
 /* ================= FETCH ================= */
 
-$services = mysqli_query($conn,"
-    SELECT * FROM pet_boarding
-    ORDER BY id ASC
-");
+$services = mysqli_query($conn, "SELECT * FROM pet_boarding ORDER BY id ASC");
 
 $page_title = "Pet Boarding";
 require_once 'includes/header.php';
@@ -263,6 +263,7 @@ require_once 'includes/header.php';
 <div class="boarding-card">
 
 <form method="POST" class="boarding-form">
+    <?php echo csrf_field(); ?>
 
 <h2 class="boarding-title">
 

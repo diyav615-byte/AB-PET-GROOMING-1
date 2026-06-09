@@ -1,20 +1,15 @@
 <?php
-// 12 hours in seconds = 12 * 60 * 60 = 43200
-$session_lifetime = 43200;
-
-// Set the session cookie and garbage collector lifetime BEFORE starting the session
-ini_set('session.gc_maxlifetime', $session_lifetime);
-session_set_cookie_params([
-    'lifetime' => $session_lifetime,
-    'path' => '/',
-    'secure' => isset($_SERVER['HTTPS']), // True if using HTTPS
-    'httponly' => true,                   // Protects against XSS
-    'samesite' => 'Lax'
-]);
-
-session_start();
-
+require_once '../includes/bootstrap.php';
 include '../config/db.php';
+require_once '../includes/RateLimiter.php';
+
+// Check rate limit for login
+checkLoginRateLimit();
+
+// Ensure a CSRF token exists in the session immediately on page load
+if (!isset($_SESSION['csrf_token'])) {
+    CsrfProtection::generateToken();
+}
 
 $error = '';
 $success = '';
@@ -32,35 +27,66 @@ if (isset($_GET['timeout'])) {
 
 // Handle login form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = trim($_POST['username'] ?? '');
-    $password = trim($_POST['password'] ?? '');
-
-    if (empty($username) || empty($password)) {
-        $error = 'Please enter both username and password.';
+    // Verify CSRF token safely without forcing a page regeneration cycle on a failure
+    if (!CsrfProtection::verifyFromPostNoRegen($_POST)) {
+        $error = 'Invalid CSRF token. Please try again.';
     } else {
-        // Prevent SQL Injection using mysqli_real_escape_string
-        $username = mysqli_real_escape_string($conn, $username);
-        $password = mysqli_real_escape_string($conn, $password);
-        
-        $query = mysqli_query($conn, "SELECT * FROM admin_users WHERE username='$username' AND password='$password'");
+        $username = trim($_POST['username'] ?? '');
+        $password = trim($_POST['password'] ?? '');
 
-        if (mysqli_num_rows($query) > 0) {
-            $admin = mysqli_fetch_assoc($query);
-
-            $_SESSION['admin_id'] = $admin['id'];
-            $_SESSION['admin_username'] = $admin['username'];
-            
-            // Set the current time as the baseline for the 12-hour window
-            $_SESSION['last_activity'] = time(); 
-
-            header("Location: dashboard.php");
-            exit;
+        if (empty($username) || empty($password)) {
+            $error = 'Please enter both username and password.';
         } else {
-            $error = "Invalid username or password.";
+            // Use prepared statement to prevent SQL injection
+            $stmt = mysqli_prepare($conn, "SELECT * FROM admin_users WHERE username=?");
+            mysqli_stmt_bind_param($stmt, "s", $username);
+            mysqli_stmt_execute($stmt);
+            $query = mysqli_stmt_get_result($stmt);
+            mysqli_stmt_close($stmt);
+
+            if ($query && mysqli_num_rows($query) > 0) {
+                $admin = mysqli_fetch_assoc($query);
+
+                // Normal plain-text password verification match
+                if ($password === $admin['password']) {
+                    // Regenerate session ID to prevent session fixation
+                    session_regenerate_id(true);
+                    
+                    CsrfProtection::generateToken();
+                    
+                    $_SESSION['admin_id'] = $admin['id'];
+                    $_SESSION['admin_username'] = $admin['username'];
+                    $_SESSION['last_activity'] = time();
+                    
+                    // Force session to be saved before redirect
+                    session_write_close();
+                    
+                    // Explicitly set session cookie for localhost with proper domain
+                    $cookie_params = session_get_cookie_params();
+                    setcookie(
+                        session_name(),
+                        session_id(),
+                        time() + 10800,
+                        '/',
+                        '',  // Empty domain for localhost
+                        false,  // secure = false for localhost (no HTTPS)
+                        true    // httponly
+                    );
+                    
+                    // Use header redirect to ensure session cookie is sent
+                    header("Location: dashboard.php");
+                    exit;
+                } else {
+                    recordFailedLogin();
+                    $error = "Invalid username or password.";
+                }
+            } else {
+                recordFailedLogin();
+                $error = "Invalid username or password.";
+            }
         }
-    }
-}
-?>
+    } // Closes CSRF Token Else Block
+} // Closes Request Method POST Block
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -185,11 +211,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-left-color: #6BBF59;
         }
 
-        .demo-info strong {
-            display: block;
-            margin-bottom: 5px;
-        }
-
         @media (max-width: 480px) {
             .login-container {
                 padding: 30px 20px;
@@ -204,7 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <div class="login-container">
         <div class="login-header">
-            <div class="login-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path fill="rgb(177, 151, 252)" d="M298.5 156.9C312.8 199.8 298.2 243.1 265.9 253.7C233.6 264.3 195.8 238.1 181.5 195.2C167.2 152.3 181.8 109 214.1 98.4C246.4 87.8 284.2 114 298.5 156.9zM164.4 262.6C183.3 295 178.7 332.7 154.2 346.7C129.7 360.7 94.5 345.8 75.7 313.4C56.9 281 61.4 243.3 85.9 229.3C110.4 215.3 145.6 230.2 164.4 262.6zM133.2 465.2C185.6 323.9 278.7 288 320 288C361.3 288 454.4 323.9 506.8 465.2C510.4 474.9 512 485.3 512 495.7L512 497.3C512 523.1 491.1 544 465.3 544C453.8 544 442.4 542.6 431.3 539.8L343.3 517.8C328 514 312 514 296.7 517.8L208.7 539.8C197.6 542.6 186.2 544 174.7 544C148.9 544 128 523.1 128 497.3L128 495.7C128 485.3 129.6 474.9 133.2 465.2zM485.8 346.7C461.3 332.7 456.7 295 475.6 262.6C494.5 230.2 529.6 215.3 554.1 229.3C578.6 243.3 583.2 281 564.3 313.4C545.4 345.8 510.3 360.7 485.8 346.7zM374.1 253.7C341.8 243.1 327.2 199.8 341.5 156.9C355.8 114 393.6 87.8 425.9 98.4C458.2 109 472.8 152.3 458.5 195.2C444.2 238.1 406.4 264.3 374.1 253.7z"/></svg></div>
+            <div class="login-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="rgb(177, 151, 252)" d="M298.5 156.9C312.8 199.8 298.2 243.1 265.9 253.7C233.6 264.3 195.8 238.1 181.5 195.2C167.2 152.3 181.8 109 214.1 98.4C246.4 87.8 284.2 114 298.5 156.9zM164.4 262.6C183.3 295 178.7 332.7 154.2 346.7C129.7 360.7 94.5 345.8 75.7 313.4C56.9 281 61.4 243.3 85.9 229.3C110.4 215.3 145.6 230.2 164.4 262.6zM133.2 465.2C185.6 323.9 278.7 288 320 288C361.3 288 454.4 323.9 506.8 465.2C510.4 474.9 512 485.3 512 495.7L512 497.3C512 523.1 491.1 544 465.3 544C453.8 544 442.4 542.6 431.3 539.8L343.3 517.8C328 514 312 514 296.7 517.8L208.7 539.8C197.6 542.6 186.2 544 174.7 544C148.9 544 128 523.1 128 497.3L128 495.7C128 485.3 129.6 474.9 133.2 465.2zM485.8 346.7C461.3 332.7 456.7 295 475.6 262.6C494.5 230.2 529.6 215.3 554.1 229.3C578.6 243.3 583.2 281 564.3 313.4C545.4 345.8 510.3 360.7 485.8 346.7zM374.1 253.7C341.8 243.1 327.2 199.8 341.5 156.9C355.8 114 393.6 87.8 425.9 98.4C458.2 109 472.8 152.3 458.5 195.2C444.2 238.1 406.4 264.3 374.1 253.7z"/></svg></div>
             <h1>Pet Grooming</h1>
             <p>Admin Management Panel</p>
         </div>
@@ -222,6 +243,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php endif; ?>
 
         <form method="POST" action="">
+            <?php echo csrf_field(); ?>
             <div class="form-group">
                 <label for="username">Username</label>
                 <input 
@@ -247,6 +269,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             <button type="submit" class="login-btn">Login</button>
         </form>
-
+    </div>
 </body>
 </html>

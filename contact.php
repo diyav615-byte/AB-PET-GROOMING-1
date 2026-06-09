@@ -49,6 +49,7 @@
     <h2>Write a Review</h2>
 
    <form action="submit_review.php" method="POST" onsubmit="return validateReview()">
+       <?php echo csrf_field(); ?>
       <input type="text" name="name" placeholder="Your Name" required>
 
       <select name="rating" required>
@@ -72,6 +73,7 @@
     <h2>Send Us Message</h2>
 
    <form action="submit_contact.php" method="POST" onsubmit="return validateContact()">
+       <?php echo csrf_field(); ?>
 
       <input type="text" name="name" placeholder="Your Name" required>
       <input type="email" name="email" placeholder="Your Email" required>
@@ -89,19 +91,18 @@
 
 <!-- ===== LOCATION ===== -->
 <div class="location-box">
-  <h2>Your Location</h2>
+    <h2>Location</h2>
 
-  <p>
-    Shop No 1, Amar Chawl,<br>
-    Kelkar Wadi Road,<br>
-    Chembur East, Mumbai
-  </p>
+    <p>
+        Shop No 1, Amar Chawl,<br>
+        Kelkar Wadi Road,<br>
+        Chembur East, Mumbai
+    </p>
 
-  <div class="map">
-    <iframe src="https://maps.google.com/maps?q=Chembur&t=&z=13&output=embed"></iframe>
+<div class="map">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3769.42303947511!2d72.9039836!3d19.0592047!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c9c7b8d3f3b1%3A0x9c5c5c5c5c5c5c5c!2sKelkar%20Wadi%20Rd%2C%20Chembur%20East%2C%20Mumbai%2C%20Maharashtra%20400071!5e0!3m2!1sen!2sin!4v1699999999999!5m2!1sen!2sin" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
   </div>
 </div>
-
 </section>
 
 <style>

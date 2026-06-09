@@ -1,14 +1,14 @@
 <?php
-
+require_once '../includes/bootstrap.php';
 include '../config/db.php';
+
 // DELETE APPOINTMENT
 if(isset($_GET['delete'])){
-
     $id = (int)$_GET['delete'];
-
-    mysqli_query($conn,
-    "DELETE FROM appointments WHERE id=$id");
-
+    $stmt = mysqli_prepare($conn, "DELETE FROM appointments WHERE id=?");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
     header("Location: bookings.php");
     exit;
 }
@@ -16,12 +16,11 @@ if(isset($_GET['delete'])){
 
 // ACCEPT APPOINTMENT
 if(isset($_GET['accept'])){
-
     $id = (int)$_GET['accept'];
-
-    mysqli_query($conn,
-    "UPDATE appointments SET status='Accepted' WHERE id=$id");
-
+    $stmt = mysqli_prepare($conn, "UPDATE appointments SET status='Accepted' WHERE id=?");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
     header("Location: bookings.php");
     exit;
 }
@@ -29,12 +28,11 @@ if(isset($_GET['accept'])){
 
 // REJECT APPOINTMENT
 if(isset($_GET['reject'])){
-
     $id = (int)$_GET['reject'];
-
-    mysqli_query($conn,
-    "UPDATE appointments SET status='Rejected' WHERE id=$id");
-
+    $stmt = mysqli_prepare($conn, "UPDATE appointments SET status='Rejected' WHERE id=?");
+    mysqli_stmt_bind_param($stmt, "i", $id);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_close($stmt);
     header("Location: bookings.php");
     exit;
 }
@@ -131,7 +129,11 @@ $stmt->execute();
 $stats = $stmt->get_result()->fetch_assoc();
 
 $today = date('Y-m-d');
-$todayCount = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) as cnt FROM appointments WHERE appointment_date = '$today'"))['cnt'];
+$stmt = mysqli_prepare($conn, "SELECT COUNT(*) as cnt FROM appointments WHERE appointment_date = ?");
+mysqli_stmt_bind_param($stmt, "s", $today);
+mysqli_stmt_execute($stmt);
+$todayCount = mysqli_fetch_assoc(mysqli_stmt_get_result($stmt))['cnt'];
+mysqli_stmt_close($stmt);
 ?>
 
 <!-- PAGE HEADER -->

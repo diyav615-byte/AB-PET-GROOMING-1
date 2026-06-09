@@ -26,10 +26,15 @@
         <?php endif; ?>
 
         <?php if(isset($_GET['error'])): ?>
-          <div class="appt-msg error">Something went wrong. Please try again.</div>
+          <?php if($_GET['error'] === 'time'): ?>
+            <div class="appt-msg error">Invalid time selected. Please choose a time between 10:30 AM and 6:30 PM (30-minute intervals).</div>
+          <?php else: ?>
+            <div class="appt-msg error">Something went wrong. Please try again.</div>
+          <?php endif; ?>
         <?php endif; ?>
 
         <form action="submit-appointment.php" method="POST" class="appt-form">
+            <?php echo csrf_field(); ?>
 
           <h2>Owner Information</h2>
 
@@ -46,7 +51,7 @@
 
             <div class="form-group">
               <label>Phone Number *</label>
-              <input type="text" name="phone" placeholder="+91 98765 43210" required>
+              <input type="text" name="phone" placeholder="+91" required>
             </div>
           </div>
 
@@ -136,7 +141,7 @@
 
             <div class="form-group">
               <label>Preferred Time *</label>
-              <input type="time" name="appointment_time" min="10:30" max="19:00" step="1800" required>
+              <input type="time" name="appointment_time" min="10:30" max="18:30" step="1800" required>
             </div>
           </div>
 
@@ -259,22 +264,22 @@
 
     <div class="faq-grid">
       <div class="faq-item">
-        <h4>How will I be notified about my appointment?</h4>
+        <h4>1. How will I be notified about my appointment?</h4>
         <p>We will contact you on your phone number or email after checking availability.</p>
       </div>
 
       <div class="faq-item">
-        <h4>Can I reschedule my appointment?</h4>
+        <h4>2. Can I reschedule my appointment?</h4>
         <p>Yes, you can reschedule with 24 hours notice. Contact us directly for changes.</p>
       </div>
 
       <div class="faq-item">
-        <h4>Can I book for more than one pet?</h4>
+        <h4>3. Can I book for more than one pet?</h4>
         <p>Yes, you can select the number of pets in the form and mention details in the notes.</p>
       </div>
 
       <div class="faq-item">
-        <h4>Can I add extra services?</h4>
+        <h4>4. Can I add extra services?</h4>
         <p>Yes, add-on services like ear cleaning, nail clipping, sanitary trim and others can be selected.</p>
       </div>
     </div>
